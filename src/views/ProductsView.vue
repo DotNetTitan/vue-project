@@ -5,8 +5,8 @@
         <!-- Filters -->
         <div class="md:w-1/4">
           <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl">
-            <h2 class="text-xl font-bold mb-4">Filters</h2>
-            <div class="space-y-4">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800 dark:text-white">Filters</h2>
+            <div class="space-y-6">
               <!-- Filter toggles -->
               <div class="flex flex-wrap gap-2 mb-4">
                 <button
@@ -22,7 +22,7 @@
 
               <!-- Category filter -->
               <div v-if="availableFilters.find(f => f.id === 'category')?.active">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categories</label>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">Categories</h3>
                 <div class="flex flex-wrap gap-2">
                   <button
                     v-for="category in categories"
@@ -38,7 +38,7 @@
 
               <!-- Price range filter -->
               <div v-if="availableFilters.find(f => f.id === 'price')?.active">
-                <label for="priceRange" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Price Range</label>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">Price Range</h3>
                 <div class="flex items-center space-x-4">
                   <span class="text-sm text-gray-600 dark:text-gray-400">${{ minPrice }}</span>
                   <input
@@ -57,7 +57,7 @@
 
               <!-- Rating filter -->
               <div v-if="availableFilters.find(f => f.id === 'rating')?.active">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Minimum Rating</label>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">Minimum Rating</h3>
                 <div class="flex items-center space-x-1">
                   <button
                     v-for="star in 5"
@@ -83,7 +83,7 @@
 
               <!-- Sort filter -->
               <div v-if="availableFilters.find(f => f.id === 'sort')?.active">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sort By</label>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">Sort By</h3>
                 <div class="flex flex-wrap gap-2">
                   <button
                     v-for="option in sortOptions"

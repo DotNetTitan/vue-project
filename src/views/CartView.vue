@@ -1,12 +1,12 @@
 <template>
-  <div class="cart min-h-screen p-8 bg-gray-100 dark:bg-gray-900">
+  <div class="cart min-h-screen p-4 sm:p-8 bg-gray-100 dark:bg-gray-900">
     <div class="max-w-4xl mx-auto">
-      <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-8">Your Cart</h1>
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-6 sm:mb-8">Your Cart</h1>
       <div v-if="cartStore.cartItems.length > 0">
         <ul class="space-y-4">
-          <li v-for="item in cartStore.cartItems" :key="item.id" class="flex items-center bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-            <img :src="item.image" :alt="item.title" class="w-20 h-20 object-cover rounded-md mr-6">
-            <div class="flex-grow">
+          <li v-for="item in cartStore.cartItems" :key="item.id" class="flex flex-col sm:flex-row items-center bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md">
+            <img :src="item.image" :alt="item.title" class="w-20 h-20 object-cover rounded-md mb-4 sm:mb-0 sm:mr-6">
+            <div class="flex-grow text-center sm:text-left mb-4 sm:mb-0">
               <h3 class="text-lg font-semibold text-gray-800 dark:text-white">{{ item.title }}</h3>
               <p class="text-gray-600 dark:text-gray-400">${{ item.price.toFixed(2) }}</p>
             </div>
@@ -15,7 +15,7 @@
               <span class="w-8 text-center text-gray-800 dark:text-white">{{ item.quantity }}</span>
               <button @click="increaseQuantity(item.id)" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 w-8 h-8 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded">+</button>
             </div>
-            <button @click="removeItem(item.id)" class="ml-4 text-red-500 hover:text-red-700">
+            <button @click="removeItem(item.id)" class="mt-4 sm:mt-0 sm:ml-4 text-red-500 hover:text-red-700">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>

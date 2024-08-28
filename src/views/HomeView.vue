@@ -1,10 +1,10 @@
 <template>
-  <div class="home min-h-screen flex flex-col justify-center items-center p-8">
+  <div class="home min-h-screen flex flex-col justify-center items-center p-4 sm:p-8">
     <div class="max-w-4xl mx-auto text-center">
-      <h1 class="text-5xl font-extrabold text-gray-900 dark:text-white mb-8 animate-fade-in-down">
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 sm:mb-8 animate-fade-in-down">
         Welcome to Our E-Commerce Store
       </h1>
-      <p class="text-xl text-gray-600 dark:text-gray-300 mb-12 animate-fade-in-up">
+      <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8 sm:mb-12 animate-fade-in-up">
         Discover amazing products at great prices!
       </p>
       
@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+    <div class="mt-12 sm:mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
       <div v-for="(feature, index) in features" :key="index" class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg text-center transform transition duration-500 hover:scale-105">
         <component :is="feature.icon" class="h-12 w-12 mx-auto mb-4 text-indigo-600 dark:text-indigo-400" />
         <h3 class="text-xl font-semibold mb-2 text-gray-900 dark:text-white">{{ feature.title }}</h3>

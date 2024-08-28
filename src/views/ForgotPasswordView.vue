@@ -1,6 +1,6 @@
 <template>
-  <div class="forgot-password min-h-screen flex items-center justify-center p-4">
-    <div class="max-w-md w-full space-y-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-10 rounded-3xl shadow-2xl transform transition-all hover:scale-102 hover:shadow-3xl">
+  <div class="min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full space-y-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 sm:p-10 rounded-3xl shadow-2xl transform transition-all hover:scale-102 hover:shadow-3xl">
       <div class="text-center">
         <h2 class="mt-6 text-4xl font-extrabold text-gray-900 dark:text-white">Forgot Password</h2>
         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Enter your email to reset your password</p>
