@@ -6,9 +6,12 @@ export const useProductStore = defineStore('product', () => {
   const products = ref<Product[]>([])
 
   const fetchProducts = async () => {
-    // Simulating an API call
     const response = await fetch('https://fakestoreapi.com/products')
-    products.value = await response.json()
+    const data = await response.json()
+    products.value = data.map((product: Product) => ({
+      ...product,
+      images: [product.image, product.image, product.image,product.image, product.image, product.image,product.image, product.image, product.image] // Add dummy images for testing
+    }))
   }
 
   const getProductById = (id: number) => {

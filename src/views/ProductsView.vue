@@ -58,27 +58,29 @@
               <!-- Rating filter -->
               <div v-if="availableFilters.find(f => f.id === 'rating')?.active">
                 <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-3">Minimum Rating</h3>
-                <div class="flex items-center space-x-1">
-                  <button
-                    v-for="star in 5"
-                    :key="star"
-                    @click="setMinRating(star)"
-                    class="focus:outline-none"
-                  >
-                    <svg
-                      :class="{'text-yellow-400': star <= minRating, 'text-gray-300 dark:text-gray-600': star > minRating}"
-                      class="w-8 h-8 transition-colors duration-200"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
+                <div class="flex items-center">
+                  <div class="flex items-center space-x-1">
+                    <button
+                      v-for="star in 5"
+                      :key="star"
+                      @click="setMinRating(star)"
+                      class="focus:outline-none"
                     >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  </button>
+                      <svg
+                        :class="{'text-yellow-400': star <= minRating, 'text-gray-300 dark:text-gray-600': star > minRating}"
+                        class="w-8 h-8 transition-colors duration-200"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    </button>
+                  </div>
+                  <p class="text-sm text-gray-600 dark:text-gray-400 ml-3">
+                    {{ minRating === 0 ? 'Any rating' : `${minRating}+ stars` }}
+                  </p>
                 </div>
-                <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                  {{ minRating === 0 ? 'Any rating' : `${minRating}+ stars` }}
-                </p>
               </div>
 
               <!-- Sort filter -->
@@ -242,15 +244,34 @@
   </button>
 
   <!-- Product Details Modal -->
-  <div v-if="selectedProduct" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-2xl w-full mx-4 relative">
-      <button @click="closeProductDetails" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+  <div v-if="selectedProduct" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 md:p-8 max-w-4xl w-full mx-auto relative overflow-y-auto max-h-[90vh]">
+      <button @click="closeProductDetails" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
       <div class="flex flex-col md:flex-row">
-        <img :src="selectedProduct.image" :alt="selectedProduct.title" class="w-full md:w-1/2 h-64 object-cover rounded-lg mb-4 md:mb-0 md:mr-6">
+        <div class="md:w-1/2 mb-4 md:mb-0 md:mr-6">
+          <div class="relative overflow-hidden rounded-lg shadow-md" style="padding-top: 100%;">
+            <img 
+              :src="selectedProduct.images[currentImageIndex]" 
+              :alt="selectedProduct.title" 
+              class="absolute top-0 left-0 w-full h-full object-contain rounded-lg border border-gray-200 dark:border-gray-700"
+            >
+          </div>
+          <div class="flex space-x-2 overflow-x-auto mt-4 pb-2">
+            <button 
+              v-for="(image, index) in selectedProduct.images" 
+              :key="index" 
+              @click="currentImageIndex = index"
+              class="flex-shrink-0 w-20 h-20 rounded-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              :class="{ 'ring-2 ring-indigo-500': currentImageIndex === index }"
+            >
+              <img :src="image" :alt="`${selectedProduct.title} - Image ${index + 1}`" class="w-full h-full object-cover">
+            </button>
+          </div>
+        </div>
         <div class="flex-1">
           <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-2">{{ selectedProduct.title }}</h2>
           <p class="text-gray-600 dark:text-gray-400 mb-4">{{ selectedProduct.description }}</p>
@@ -519,9 +540,11 @@ const toggleCategory = (category: string) => {
 }
 
 const selectedProduct = ref<Product | null>(null)
+const currentImageIndex = ref(0)
 
 const openProductDetails = (product: Product) => {
   selectedProduct.value = product
+  currentImageIndex.value = 0 // Reset to first image when opening modal
 }
 
 const closeProductDetails = () => {
@@ -545,5 +568,27 @@ const closeProductDetails = () => {
 
 .group:hover .group-hover\:opacity-100 {
   opacity: 1;
+}
+
+.overflow-x-auto {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+.overflow-x-auto::-webkit-scrollbar {
+  height: 10px; /* Increased from 6px to 10px */
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 5px; /* Increased from 3px to 5px */
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.7);
 }
 </style>

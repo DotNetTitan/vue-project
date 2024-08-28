@@ -5,6 +5,7 @@ export interface Product {
   price: number;
   category: string;
   image: string;
+  images: string[]; // Add this line
   rating: {
     rate: number;
     count: number;
