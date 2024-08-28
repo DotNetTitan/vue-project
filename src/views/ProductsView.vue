@@ -245,14 +245,14 @@
 
   <!-- Product Details Modal -->
   <div v-if="selectedProduct" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 md:p-8 max-w-4xl w-full mx-auto relative overflow-y-auto max-h-[90vh]">
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 md:p-8 max-w-4xl w-full mx-auto relative overflow-y-auto max-h-[90vh] product-details-modal">
       <button @click="closeProductDetails" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
       <div class="flex flex-col md:flex-row">
-        <div class="md:w-1/2 mb-4 md:mb-0 md:mr-6">
+        <div class="md:w-1/2 mb-4 md:mb-0 md:mr-6 relative">
           <div class="relative overflow-hidden rounded-lg shadow-md" style="padding-top: 100%;">
             <img 
               :src="selectedProduct.images[currentImageIndex]" 
@@ -260,13 +260,26 @@
               class="absolute top-0 left-0 w-full h-full object-contain rounded-lg border border-gray-200 dark:border-gray-700"
             >
           </div>
-          <div class="flex space-x-2 overflow-x-auto mt-4 pb-2">
+          <!-- Left arrow -->
+          <button @click="prevImage" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <!-- Right arrow -->
+          <button @click="nextImage" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+          <div class="flex space-x-2 overflow-x-auto mt-4 pb-2" ref="thumbnailContainer">
             <button 
               v-for="(image, index) in selectedProduct.images" 
               :key="index" 
-              @click="currentImageIndex = index"
+              @click="setCurrentImage(index)"
               class="flex-shrink-0 w-20 h-20 rounded-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-indigo-500"
               :class="{ 'ring-2 ring-indigo-500': currentImageIndex === index }"
+              :ref="el => { if (el) thumbnailRefs[index] = el }"
             >
               <img :src="image" :alt="`${selectedProduct.title} - Image ${index + 1}`" class="w-full h-full object-cover">
             </button>
@@ -290,7 +303,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watchEffect, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, watchEffect, onUnmounted, watch, nextTick } from 'vue'
 import { debounce } from 'lodash-es'
 import { useProductStore } from '@/stores/products'
 import { useCartStore } from '../stores/cart'
@@ -541,15 +554,48 @@ const toggleCategory = (category: string) => {
 
 const selectedProduct = ref<Product | null>(null)
 const currentImageIndex = ref(0)
+const thumbnailContainer = ref<HTMLElement | null>(null)
+const thumbnailRefs = ref<HTMLElement[]>([])
+
+const prevImage = () => {
+  if (selectedProduct.value) {
+    setCurrentImage((currentImageIndex.value - 1 + selectedProduct.value.images.length) % selectedProduct.value.images.length)
+  }
+}
+
+const nextImage = () => {
+  if (selectedProduct.value) {
+    setCurrentImage((currentImageIndex.value + 1) % selectedProduct.value.images.length)
+  }
+}
+
+const setCurrentImage = (index: number) => {
+  currentImageIndex.value = index
+  scrollToThumbnail(index)
+}
+
+const scrollToThumbnail = (index: number) => {
+  if (thumbnailRefs.value[index] && thumbnailContainer.value) {
+    const thumbnail = thumbnailRefs.value[index]
+    const container = thumbnailContainer.value
+    const scrollLeft = thumbnail.offsetLeft - container.offsetWidth / 2 + thumbnail.offsetWidth / 2
+    container.scrollTo({ left: scrollLeft, behavior: 'smooth' })
+  }
+}
 
 const openProductDetails = (product: Product) => {
   selectedProduct.value = product
   currentImageIndex.value = 0 // Reset to first image when opening modal
+  thumbnailRefs.value = [] // Reset thumbnail refs
+  nextTick(() => {
+    scrollToThumbnail(0) // Scroll to the first thumbnail after the modal has rendered
+  })
 }
 
 const closeProductDetails = () => {
   selectedProduct.value = null
 }
+
 </script>
 
 <style scoped>
@@ -590,5 +636,40 @@ const closeProductDetails = () => {
 
 .overflow-x-auto::-webkit-scrollbar-thumb:hover {
   background-color: rgba(156, 163, 175, 0.7);
+}
+
+/* Custom scrollbar styles */
+.product-details-modal {
+  scrollbar-width: auto;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+.product-details-modal::-webkit-scrollbar {
+  width: 12px;
+}
+
+.product-details-modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.product-details-modal::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 6px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+}
+
+.product-details-modal::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(156, 163, 175, 0.7);
+}
+
+/* Add these new styles for the arrow buttons */
+.product-details-modal button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+/* Smooth scrolling for thumbnail container */
+.product-details-modal .overflow-x-auto {
+  scroll-behavior: smooth;
 }
 </style>
