@@ -15,12 +15,21 @@
                 </select>
               </div>
               <div>
-                <label for="minPrice" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Min Price</label>
-                <input v-model="minPrice" type="number" id="minPrice" placeholder="Min Price" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
-              </div>
-              <div>
-                <label for="maxPrice" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Max Price</label>
-                <input v-model="maxPrice" type="number" id="maxPrice" placeholder="Max Price" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
+                <label for="priceRange" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Price Range</label>
+                <div class="flex items-center space-x-4">
+                  <span class="text-sm text-gray-600 dark:text-gray-400">${{ minPrice }}</span>
+                  <input
+                    type="range"
+                    id="priceRange"
+                    v-model="maxPrice"
+                    :min="0"
+                    :max="maxProductPrice"
+                    :step="1"
+                    class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                    @input="updatePriceRange"
+                  >
+                  <span class="text-sm text-gray-600 dark:text-gray-400">${{ maxPrice }}</span>
+                </div>
               </div>
               <div>
                 <label for="rating" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Minimum Rating</label>
@@ -74,7 +83,8 @@
           </div>
           <div class="flex justify-between items-center mb-4">
             <p class="text-gray-600 dark:text-gray-400">
-              Showing {{ (currentPage - 1) * itemsPerPage + 1 }} - {{ Math.min(currentPage * itemsPerPage, filteredProducts.length) }} 
+              Showing {{ filteredProducts.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0 }} - 
+              {{ Math.min(currentPage * itemsPerPage, filteredProducts.length) }} 
               of {{ filteredProducts.length }} product{{ filteredProducts.length !== 1 ? 's' : '' }}
             </p>
             <button @click="resetFilters" class="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-200 transition duration-300">
@@ -104,7 +114,7 @@
           </div>
 
           <!-- Pagination Controls -->
-          <div class="mt-8 flex justify-center items-center space-x-2">
+          <div v-if="filteredProducts.length > 0" class="mt-8 flex justify-center items-center space-x-2">
             <button @click="prevPage" :disabled="currentPage === 1" class="px-4 py-2 bg-indigo-600 text-white rounded-md disabled:opacity-50 hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
@@ -127,7 +137,7 @@
           </div>
 
           <!-- No Products Found Message -->
-          <div v-if="filteredProducts.length === 0" class="text-center py-16">
+          <div v-else class="text-center py-16">
             <p class="text-2xl text-gray-600 dark:text-gray-400 mb-4">No products found matching your criteria.</p>
             <button @click="resetFilters" class="bg-indigo-500 text-white px-6 py-2 rounded-md hover:bg-indigo-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
               Reset Filters
@@ -177,7 +187,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watchEffect, onUnmounted } from 'vue'
+import { ref, computed, onMounted, watchEffect, onUnmounted, watch } from 'vue'
 import { debounce } from 'lodash-es'
 import { useProductStore } from '@/stores/products'
 import { useCartStore } from '../stores/cart'
@@ -188,12 +198,14 @@ const cartStore = useCartStore()
 
 onMounted(async () => {
   await productStore.fetchProducts()
+  resetFilters() // Initialize filters with all products
 })
 
 const searchQuery = ref('')
 const selectedCategory = ref('')
-const minPrice = ref('')
-const maxPrice = ref('')
+const priceRange = ref([0, 1000]) // Default range
+const minPrice = ref(0)
+const maxPrice = ref(1000)
 const minRating = ref(0)
 const sortBy = ref('default')
 const isCartOpen = ref(false)
@@ -218,14 +230,13 @@ const suggestions = computed(() => {
 const filteredProducts = computed(() => {
   return productStore.products
     .filter((product: Product) => {
-      const searchMatch = searchQuery.value.toLowerCase() === '' || 
+      const searchMatch = !searchQuery.value || 
         product.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
         product.description.toLowerCase().includes(searchQuery.value.toLowerCase())
       const categoryMatch = !selectedCategory.value || product.category === selectedCategory.value
-      const minPriceMatch = !minPrice.value || product.price >= Number(minPrice.value)
-      const maxPriceMatch = !maxPrice.value || product.price <= Number(maxPrice.value)
-      const ratingMatch = product.rating.rate >= minRating.value
-      return searchMatch && categoryMatch && minPriceMatch && maxPriceMatch && ratingMatch
+      const priceMatch = product.price >= minPrice.value && product.price <= maxPrice.value
+      const ratingMatch = product.rating.rate >= Number(minRating.value)
+      return searchMatch && categoryMatch && priceMatch && ratingMatch
     })
     .sort((a: Product, b: Product) => {
       switch (sortBy.value) {
@@ -313,8 +324,9 @@ const resetFilters = () => {
   scrollToTop()
   searchQuery.value = ''
   selectedCategory.value = ''
-  minPrice.value = ''
-  maxPrice.value = ''
+  priceRange.value = [0, maxProductPrice.value]
+  minPrice.value = 0
+  maxPrice.value = maxProductPrice.value
   minRating.value = 0
   sortBy.value = 'default'
 }
@@ -343,8 +355,7 @@ const debouncedApplyFilters = debounce(applyFilters, 300)
 watchEffect(() => {
   searchQuery.value
   selectedCategory.value
-  minPrice.value
-  maxPrice.value
+  priceRange.value
   minRating.value
   sortBy.value
   debouncedApplyFilters()
@@ -359,6 +370,23 @@ const handleClickOutside = (event: MouseEvent) => {
 
 const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+const maxProductPrice = computed(() => {
+  return Math.max(...productStore.products.map(product => product.price), 1000)
+})
+
+watch(() => productStore.products, () => {
+  const highestPrice = Math.max(...productStore.products.map(product => product.price), 1000)
+  priceRange.value = [0, highestPrice]
+  minPrice.value = 0
+  maxPrice.value = highestPrice
+}, { immediate: true })
+
+const updatePriceRange = () => {
+  minPrice.value = 0
+  priceRange.value = [minPrice.value, maxPrice.value]
+  debouncedApplyFilters()
 }
 
 onMounted(() => {
