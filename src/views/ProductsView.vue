@@ -22,11 +22,18 @@
 
               <!-- Category filter -->
               <div v-if="availableFilters.find(f => f.id === 'category')?.active">
-                <label for="category" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
-                <select v-model="selectedCategory" id="category" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
-                  <option value="">All Categories</option>
-                  <option v-for="category in categories" :key="category" :value="category">{{ category }}</option>
-                </select>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categories</label>
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    v-for="category in categories"
+                    :key="category"
+                    @click="toggleCategory(category)"
+                    :class="{'bg-indigo-600 text-white': selectedCategories.includes(category), 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300': !selectedCategories.includes(category)}"
+                    class="px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-indigo-500 hover:text-white"
+                  >
+                    {{ category }}
+                  </button>
+                </div>
               </div>
 
               <!-- Price range filter -->
@@ -76,13 +83,19 @@
 
               <!-- Sort filter -->
               <div v-if="availableFilters.find(f => f.id === 'sort')?.active">
-                <label for="sortBy" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Sort By</label>
-                <select v-model="sortBy" id="sortBy" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200">
-                  <option value="default">Default</option>
-                  <option value="priceLowToHigh">Price: Low to High</option>
-                  <option value="priceHighToLow">Price: High to Low</option>
-                  <option value="rating">Rating</option>
-                </select>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sort By</label>
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    v-for="option in sortOptions"
+                    :key="option.value"
+                    @click="sortBy = option.value"
+                    :class="{'bg-indigo-600 text-white': sortBy === option.value, 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300': sortBy !== option.value}"
+                    class="px-3 py-1 rounded-full text-sm font-medium transition-colors duration-200 hover:bg-indigo-500 hover:text-white flex items-center"
+                  >
+                    <span class="mr-1">{{ option.icon }}</span>
+                    {{ option.label }}
+                  </button>
+                </div>
               </div>
 
               <button @click="applyFilters" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-2 rounded-md hover:from-indigo-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform hover:scale-105 mt-4">
@@ -237,7 +250,7 @@ onMounted(async () => {
 })
 
 const searchQuery = ref('')
-const selectedCategory = ref('')
+const selectedCategories = ref<string[]>([])
 const priceRange = ref([0, 1000]) // Default range
 const minPrice = ref(0)
 const maxPrice = ref(1000)
@@ -248,6 +261,13 @@ const lastAddedProductId = ref<number | null>(null)
 const showSuggestions = ref(false)
 const currentPage = ref(1)
 const itemsPerPage = ref(12) // Adjust this number as needed
+
+const sortOptions = ref([
+  { value: 'default', label: 'Default', icon: '⇅' },
+  { value: 'priceLowToHigh', label: 'Price: Low to High', icon: '↑' },
+  { value: 'priceHighToLow', label: 'Price: High to Low', icon: '↓' },
+  { value: 'rating', label: 'Rating', icon: '⭐' }
+])
 
 const categories = computed(() => {
   return [...new Set(productStore.products.map(product => product.category))]
@@ -268,7 +288,7 @@ const filteredProducts = computed(() => {
       const searchMatch = !searchQuery.value || 
         product.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
         product.description.toLowerCase().includes(searchQuery.value.toLowerCase())
-      const categoryMatch = !selectedCategory.value || product.category === selectedCategory.value
+      const categoryMatch = selectedCategories.value.length === 0 || selectedCategories.value.includes(product.category)
       const priceMatch = product.price >= minPrice.value && product.price <= maxPrice.value
       const ratingMatch = product.rating.rate >= minRating.value
       return searchMatch && categoryMatch && priceMatch && ratingMatch
@@ -358,7 +378,7 @@ const resetFilters = () => {
   currentPage.value = 1
   scrollToTop()
   searchQuery.value = ''
-  selectedCategory.value = ''
+  selectedCategories.value = []
   priceRange.value = [0, maxProductPrice.value]
   minPrice.value = 0
   maxPrice.value = maxProductPrice.value
@@ -390,7 +410,7 @@ const debouncedApplyFilters = debounce(applyFilters, 300)
 
 watchEffect(() => {
   searchQuery.value
-  selectedCategory.value
+  selectedCategories.value
   priceRange.value
   minRating.value
   sortBy.value
@@ -452,6 +472,15 @@ const toggleFilter = (filterId: string) => {
 // Add a function to handle star rating selection
 const setMinRating = (rating: number) => {
   minRating.value = minRating.value === rating ? 0 : rating
+}
+
+const toggleCategory = (category: string) => {
+  const index = selectedCategories.value.indexOf(category)
+  if (index > -1) {
+    selectedCategories.value.splice(index, 1)
+  } else {
+    selectedCategories.value.push(category)
+  }
 }
 </script>
 
