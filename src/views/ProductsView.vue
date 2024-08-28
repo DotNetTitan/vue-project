@@ -143,11 +143,16 @@
             </button>
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <div v-for="product in paginatedProducts" :key="product.id" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:scale-105 flex flex-col">
+            <div v-for="product in paginatedProducts" :key="product.id" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:scale-105 flex flex-col group">
               <div class="relative">
                 <img :src="product.image" :alt="product.title" class="w-full h-64 object-cover">
                 <div class="absolute top-0 right-0 bg-indigo-500 text-white px-3 py-1 m-2 rounded-full text-sm font-semibold">
                   ${{ product.price.toFixed(2) }}
+                </div>
+                <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <button @click="openProductDetails(product)" class="bg-white text-gray-800 px-4 py-2 rounded-md hover:bg-gray-100 transition duration-300">
+                    View Details
+                  </button>
                 </div>
               </div>
               <div class="p-6 flex flex-col flex-grow">
@@ -235,6 +240,32 @@
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
     </svg>
   </button>
+
+  <!-- Product Details Modal -->
+  <div v-if="selectedProduct" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-2xl w-full mx-4 relative">
+      <button @click="closeProductDetails" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <div class="flex flex-col md:flex-row">
+        <img :src="selectedProduct.image" :alt="selectedProduct.title" class="w-full md:w-1/2 h-64 object-cover rounded-lg mb-4 md:mb-0 md:mr-6">
+        <div class="flex-1">
+          <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-2">{{ selectedProduct.title }}</h2>
+          <p class="text-gray-600 dark:text-gray-400 mb-4">{{ selectedProduct.description }}</p>
+          <div class="flex items-center mb-4">
+            <span class="text-yellow-400 mr-1">★</span>
+            <span class="text-gray-600 dark:text-gray-400">{{ selectedProduct.rating.rate.toFixed(1) }} ({{ selectedProduct.rating.count }} reviews)</span>
+          </div>
+          <p class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-4">${{ selectedProduct.price.toFixed(2) }}</p>
+          <button @click="addToCart(selectedProduct)" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform hover:scale-105">
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -397,6 +428,7 @@ const addToCart = (product: Product) => {
   setTimeout(() => {
     lastAddedProductId.value = null
   }, 2000)
+  closeProductDetails()
 }
 
 const toggleCart = () => {
@@ -485,6 +517,16 @@ const toggleCategory = (category: string) => {
     selectedCategories.value.push(category)
   }
 }
+
+const selectedProduct = ref<Product | null>(null)
+
+const openProductDetails = (product: Product) => {
+  selectedProduct.value = product
+}
+
+const closeProductDetails = () => {
+  selectedProduct.value = null
+}
 </script>
 
 <style scoped>
@@ -499,5 +541,9 @@ const toggleCategory = (category: string) => {
 /* Add a smooth transition for the highlight effect */
 .bg-green-100, .dark .bg-green-800 {
   transition: background-color 0.5s ease;
+}
+
+.group:hover .group-hover\:opacity-100 {
+  opacity: 1;
 }
 </style>
