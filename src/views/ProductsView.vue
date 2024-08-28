@@ -279,7 +279,7 @@
               @click="setCurrentImage(index)"
               class="flex-shrink-0 w-20 h-20 rounded-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-indigo-500"
               :class="{ 'ring-2 ring-indigo-500': currentImageIndex === index }"
-              :ref="el => { if (el) thumbnailRefs[index] = el }"
+              :ref="el => { if (el) thumbnailRefs[index] = el as HTMLElement }"
             >
               <img :src="image" :alt="`${selectedProduct.title} - Image ${index + 1}`" class="w-full h-full object-cover">
             </button>
