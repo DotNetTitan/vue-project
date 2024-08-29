@@ -285,64 +285,68 @@
             </button>
           </div>
         </div>
-        <div class="flex-1">
-  <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-2">{{ selectedProduct.title }}</h2>
-  <p class="text-gray-600 dark:text-gray-400 mb-4">{{ selectedProduct.description }}</p>
-  <div class="flex items-center mb-4">
-    <span class="text-yellow-400 mr-1">★</span>
-    <span class="text-gray-600 dark:text-gray-400">{{ selectedProduct.rating.rate.toFixed(1) }} ({{ selectedProduct.rating.count }} reviews)</span>
-  </div>
-  <p class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-4">${{ selectedProduct.price.toFixed(2) }}</p>
-  
-  <div class="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-inner">
-    <div class="flex items-center justify-between mb-2">
-      <span class="text-lg font-semibold text-gray-700 dark:text-gray-300">Subtotal:</span>
-      <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-        ${{ (selectedProduct.price * currentCartQuantity).toFixed(2) }}
-      </span>
-    </div>
-    <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-      <span>${{ selectedProduct.price.toFixed(2) }} each</span>
-      <span>{{ currentCartQuantity }} item{{ currentCartQuantity !== 1 ? 's' : '' }} in cart</span>
-    </div>
-  </div>
-  
-  <!-- Cart interaction buttons -->
-  <div class="mt-4 flex items-center justify-between" v-if="currentCartQuantity > 0">
-    <div class="flex items-center">
-      <button 
-        @click="decrementQuantity(selectedProduct)" 
-        class="px-3 py-1 text-gray-300 bg-gray-700 hover:bg-gray-600 transition duration-200 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:z-10"
-      >
-        -
-      </button>
-      <span class="px-3 py-1 text-gray-300 bg-gray-800">
-        {{ currentCartQuantity }}
-      </span>
-      <button 
-        @click="incrementQuantity(selectedProduct)" 
-        class="px-3 py-1 text-gray-300 bg-gray-700 hover:bg-gray-600 transition duration-200 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:z-10"
-      >
-        +
-      </button>
-    </div>
-    <button 
-      @click="removeFromCart(selectedProduct)" 
-      class="text-red-500 hover:text-red-600 transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 rounded-md"
-    >
-      Remove
-    </button>
-  </div>
-  
-  <!-- Add to Cart button (only shown when item is not in cart) -->
-  <button 
-    v-if="currentCartQuantity === 0"
-    @click="addToCartFromDetails(selectedProduct)" 
-    class="mt-4 w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 text-lg font-semibold"
-  >
-    Add to Cart
-  </button>
-</div>
+        <div class="flex-1 flex flex-col h-full">
+          <div class="flex-grow">
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-4">{{ selectedProduct.title }}</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-6 flex-grow overflow-y-auto max-h-48">{{ selectedProduct.description }}</p>
+            <div class="flex items-center mb-6">
+              <span class="text-yellow-400 mr-1">★</span>
+              <span class="text-gray-600 dark:text-gray-400">{{ selectedProduct.rating.rate.toFixed(1) }} ({{ selectedProduct.rating.count }} reviews)</span>
+            </div>
+            <p class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-6">${{ selectedProduct.price.toFixed(2) }}</p>
+          </div>
+          
+          <div class="mt-auto">
+            <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-inner mb-6">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-lg font-semibold text-gray-700 dark:text-gray-300">Subtotal:</span>
+                <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                  ${{ (selectedProduct.price * currentCartQuantity).toFixed(2) }}
+                </span>
+              </div>
+              <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+                <span>${{ selectedProduct.price.toFixed(2) }} each</span>
+                <span>{{ currentCartQuantity }} item{{ currentCartQuantity !== 1 ? 's' : '' }} in cart</span>
+              </div>
+            </div>
+            
+            <!-- Cart interaction buttons -->
+            <div class="flex items-center justify-between mb-4" v-if="currentCartQuantity > 0">
+              <div class="flex items-center">
+                <button 
+                  @click="decrementQuantity(selectedProduct)" 
+                  class="px-3 py-1 text-gray-300 bg-gray-700 hover:bg-gray-600 transition duration-200 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:z-10"
+                >
+                  -
+                </button>
+                <span class="px-3 py-1 text-gray-300 bg-gray-800">
+                  {{ currentCartQuantity }}
+                </span>
+                <button 
+                  @click="incrementQuantity(selectedProduct)" 
+                  class="px-3 py-1 text-gray-300 bg-gray-700 hover:bg-gray-600 transition duration-200 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:z-10"
+                >
+                  +
+                </button>
+              </div>
+              <button 
+                @click="removeFromCart(selectedProduct)" 
+                class="text-red-500 hover:text-red-600 transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 rounded-md"
+              >
+                Remove
+              </button>
+            </div>
+            
+            <!-- Add to Cart button (only shown when item is not in cart) -->
+            <button 
+              v-if="currentCartQuantity === 0"
+              @click="addToCartFromDetails(selectedProduct)" 
+              class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 text-lg font-semibold"
+            >
+              Add to Cart
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
