@@ -33,7 +33,8 @@ const router = createRouter({
     {
       path: '/products',
       name: 'products',
-      component: ProductsView
+      component: ProductsView,
+      props: (route) => ({ category: route.query.category })
     },
     {
       path: '/cart',

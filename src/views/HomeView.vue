@@ -1,6 +1,6 @@
 <template>
   <div class="home min-h-screen flex flex-col justify-center items-center p-4 sm:p-8">
-    <div class="max-w-4xl mx-auto text-center">
+    <div class="max-w-6xl mx-auto text-center mb-12">
       <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 sm:mb-8 animate-fade-in-down">
         Welcome to Our E-Commerce Store
       </h1>
@@ -10,11 +10,40 @@
       
       <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
         <RouterLink to="/products" class="inline-block px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-          Browse Products
+          Browse All Products
         </RouterLink>
         <RouterLink to="/register" class="inline-block px-6 py-3 bg-white text-indigo-600 font-bold rounded-lg border-2 border-indigo-600 hover:bg-indigo-50 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
           Sign Up
         </RouterLink>
+      </div>
+    </div>
+
+    <!-- Categories with Products -->
+    <div v-if="isLoading" class="w-full max-w-6xl mx-auto text-center">
+      <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-indigo-500 mx-auto"></div>
+      <p class="mt-4 text-gray-600 dark:text-gray-400">Loading amazing products...</p>
+    </div>
+
+    <div v-else class="w-full max-w-6xl mx-auto">
+      <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6 text-center">Featured Categories</h2>
+      <div class="space-y-12">
+        <div v-for="(category, index) in featuredCategories" :key="category" 
+             class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg transform transition-all duration-500 ease-in-out"
+             :class="{'opacity-0 translate-y-10': !isVisible(index), 'opacity-100 translate-y-0': isVisible(index)}">
+          <h3 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
+            {{ category }}
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div v-for="product in getCategoryProducts(category)" :key="product.id" 
+                 @click="navigateToProduct(product.id)"
+                 class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 text-center transform transition duration-300 hover:scale-105 cursor-pointer">
+              <img :src="product.thumbnail" :alt="product.title" class="w-full h-40 object-cover mb-3 rounded">
+              <h4 class="text-lg font-semibold mb-2 text-gray-900 dark:text-white">{{ product.title }}</h4>
+              <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">{{ truncateDescription(product.description) }}</p>
+              <p class="text-xl font-bold text-indigo-600 dark:text-indigo-400">${{ product.price.toFixed(2) }}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -29,8 +58,46 @@
 </template>
 
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
 import { ShoppingBagIcon, TruckIcon, ShieldCheckIcon } from '@heroicons/vue/24/outline'
+import { useProductStore } from '@/stores/products'
+
+const router = useRouter()
+const productStore = useProductStore()
+const featuredCategories = ref<string[]>([])
+const isLoading = ref(true)
+const visibleCategories = ref<number[]>([])
+
+onMounted(async () => {
+  await productStore.fetchProducts()
+  const allCategories = Array.from(new Set(productStore.products.map(p => p.category)))
+  featuredCategories.value = allCategories.slice(0, 3) // Get first 3 categories as featured
+  isLoading.value = false
+  setTimeout(() => {
+    visibleCategories.value = [0, 1, 2]
+  }, 100)
+})
+
+const getCategoryProducts = (category: string) => {
+  return productStore.products
+    .filter(p => p.category === category)
+    .slice(0, 3) // Limit to 3 products per category
+}
+
+const truncateDescription = (description: string, maxLength = 60) => {
+  return description.length > maxLength
+    ? description.substring(0, maxLength) + '...'
+    : description
+}
+
+const isVisible = (index: number) => {
+  return visibleCategories.value.includes(index)
+}
+
+const navigateToProduct = (productId: number) => {
+  router.push({ name: 'ProductDetail', params: { id: productId.toString() } })
+}
 
 const features = [
   {
