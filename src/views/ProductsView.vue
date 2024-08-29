@@ -286,30 +286,29 @@
           </div>
         </div>
         <div class="flex-1">
-          <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-2">{{ selectedProduct.title }}</h2>
-          <p class="text-gray-600 dark:text-gray-400 mb-4">{{ selectedProduct.description }}</p>
-          <div class="flex items-center mb-4">
-            <span class="text-yellow-400 mr-1">★</span>
-            <span class="text-gray-600 dark:text-gray-400">{{ selectedProduct.rating.rate.toFixed(1) }} ({{ selectedProduct.rating.count }} reviews)</span>
-          </div>
-          <p class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-4">${{ selectedProduct.price.toFixed(2) }}</p>
-          
-          <!-- Replace the existing subtotal section with this improved version -->
-          <div class="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-inner">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-lg font-semibold text-gray-700 dark:text-gray-300">Subtotal:</span>
-              <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                ${{ (selectedProduct.price * currentCartQuantity).toFixed(2) }}
-              </span>
-            </div>
-            <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-              <span>${{ selectedProduct.price.toFixed(2) }} each</span>
-              <span>{{ currentCartQuantity }} item{{ currentCartQuantity !== 1 ? 's' : '' }} in cart</span>
-            </div>
-          </div>
-          
-          <!-- Cart interaction buttons -->
-          <div class="mt-4 flex items-center justify-between">
+  <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-2">{{ selectedProduct.title }}</h2>
+  <p class="text-gray-600 dark:text-gray-400 mb-4">{{ selectedProduct.description }}</p>
+  <div class="flex items-center mb-4">
+    <span class="text-yellow-400 mr-1">★</span>
+    <span class="text-gray-600 dark:text-gray-400">{{ selectedProduct.rating.rate.toFixed(1) }} ({{ selectedProduct.rating.count }} reviews)</span>
+  </div>
+  <p class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-4">${{ selectedProduct.price.toFixed(2) }}</p>
+  
+  <div class="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-inner">
+    <div class="flex items-center justify-between mb-2">
+      <span class="text-lg font-semibold text-gray-700 dark:text-gray-300">Subtotal:</span>
+      <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+        ${{ (selectedProduct.price * currentCartQuantity).toFixed(2) }}
+      </span>
+    </div>
+    <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+      <span>${{ selectedProduct.price.toFixed(2) }} each</span>
+      <span>{{ currentCartQuantity }} item{{ currentCartQuantity !== 1 ? 's' : '' }} in cart</span>
+    </div>
+  </div>
+  
+  <!-- Cart interaction buttons -->
+  <div class="mt-4 flex items-center justify-between" v-if="currentCartQuantity > 0">
     <div class="flex items-center">
       <button 
         @click="decrementQuantity(selectedProduct)" 
@@ -334,16 +333,16 @@
       Remove
     </button>
   </div>
-          
-          <!-- Add to Cart button (only shown when item is not in cart) -->
-          <button 
-            v-if="currentCartQuantity === 0"
-            @click="addToCartFromDetails(selectedProduct)" 
-            class="mt-4 w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 text-lg font-semibold"
-          >
-            Add to Cart
-          </button>
-        </div>
+  
+  <!-- Add to Cart button (only shown when item is not in cart) -->
+  <button 
+    v-if="currentCartQuantity === 0"
+    @click="addToCartFromDetails(selectedProduct)" 
+    class="mt-4 w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 text-lg font-semibold"
+  >
+    Add to Cart
+  </button>
+</div>
       </div>
     </div>
   </div>
