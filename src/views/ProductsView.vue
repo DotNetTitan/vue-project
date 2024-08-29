@@ -425,6 +425,9 @@ onMounted(async () => {
   await productStore.fetchProducts()
   resetFilters()
   document.addEventListener('click', handleClickOutside)
+  productStore.products.forEach(product => {
+    preloadImages(product.images)
+  })
 })
 
 onUnmounted(() => {
@@ -682,6 +685,7 @@ const openProductDetails = (product: Product) => {
   selectedProduct.value = product
   currentImageIndex.value = 0
   thumbnailRefs.value = []
+  preloadImages(product.images)
   nextTick(() => {
     scrollToThumbnail(0)
   })
@@ -707,6 +711,23 @@ const handleInput = () => {
   showSuggestions.value = true
   selectedSuggestionIndex.value = -1
   debouncedApplyFilters()
+}
+
+const scheduleIdleTask = (callback: () => void) => {
+  if ('requestIdleCallback' in window) {
+    window.requestIdleCallback(callback)
+  } else {
+    setTimeout(callback, 1)
+  }
+}
+
+const preloadImages = (images: string[]) => {
+  scheduleIdleTask(() => {
+    images.forEach(src => {
+      const img = new Image()
+      img.src = src
+    })
+  })
 }
 
 watchEffect(() => {

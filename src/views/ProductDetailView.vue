@@ -80,14 +80,54 @@
               </button>
             </div>
   
-            <!-- Product Meta -->
-            <div class="border-t border-gray-200 dark:border-gray-700 pt-4">
+            <!-- Additional Product Details -->
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-6">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Product Details</h2>
+              <div class="grid grid-cols-2 gap-4">
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  <span class="font-semibold">Category:</span> {{ product.category }}
+                </p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  <span class="font-semibold">Brand:</span> {{ product.brand }}
+                </p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  <span class="font-semibold">SKU:</span> {{ product.sku }}
+                </p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  <span class="font-semibold">Weight:</span> {{ product.weight }} kg
+                </p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  <span class="font-semibold">Dimensions:</span> 
+                  {{ product.dimensions.width }}x{{ product.dimensions.height }}x{{ product.dimensions.depth }} cm
+                </p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  <span class="font-semibold">Minimum Order:</span> {{ product.minimumOrderQuantity }}
+                </p>
+              </div>
+            </div>
+            
+            <!-- Shipping and Warranty -->
+            <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-6">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Shipping & Warranty</h2>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                <span class="font-semibold">Shipping:</span> {{ product.shippingInformation }}
+              </p>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                <span class="font-semibold">Warranty:</span> {{ product.warrantyInformation }}
+              </p>
               <p class="text-sm text-gray-600 dark:text-gray-400">
-                <span class="font-semibold">Category:</span> {{ product.category }}
+                <span class="font-semibold">Return Policy:</span> {{ product.returnPolicy }}
               </p>
-              <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                <span class="font-semibold">Brand:</span> {{ product.brand }}
-              </p>
+            </div>
+            
+            <!-- Tags -->
+            <div class="mt-6">
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Tags</h2>
+              <div class="flex flex-wrap gap-2">
+                <span v-for="tag in product.tags" :key="tag" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm">
+                  {{ tag }}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -97,14 +137,14 @@
           <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Customer Reviews</h2>
           
           <!-- Review List -->
-          <div v-if="reviews.length > 0" class="space-y-4 mb-6">
-            <div v-for="review in reviews" :key="review.id" class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+          <div v-if="product.reviews.length > 0" class="space-y-4 mb-6">
+            <div v-for="review in product.reviews" :key="review.reviewerEmail" class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
               <div class="flex items-center mb-2">
                 <span class="text-yellow-400 mr-1">★</span>
                 <span class="font-semibold text-gray-900 dark:text-white">{{ review.rating.toFixed(1) }}</span>
               </div>
               <p class="text-gray-600 dark:text-gray-300 mb-2">{{ review.comment }}</p>
-              <p class="text-sm text-gray-500 dark:text-gray-400">By {{ review.user }} on {{ formatDate(review.date) }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">By {{ review.reviewerName }} on {{ formatDate(review.date) }}</p>
             </div>
           </div>
           <p v-else class="text-gray-600 dark:text-gray-400 mb-4">No reviews yet. Be the first to review this product!</p>
@@ -174,11 +214,6 @@
   const currentImageIndex = ref(0)
   const quantity = ref(1)
   
-  const reviews = ref([
-    { id: 1, rating: 4.5, comment: "Great product! Highly recommended.", user: "John Doe", date: new Date(2023, 3, 15) },
-    { id: 2, rating: 5, comment: "Excellent quality and fast shipping.", user: "Jane Smith", date: new Date(2023, 4, 2) },
-  ])
-  
   const newReview = ref({
     rating: 0,
     comment: ''
@@ -240,8 +275,8 @@
   }
 }
   
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
   }
   
   const submitReview = () => {
@@ -251,21 +286,23 @@
     }
   
     const review = {
-      id: reviews.value.length + 1,
       rating: newReview.value.rating,
-    comment: newReview.value.comment,
-    user: "Anonymous User", // In a real app, you'd use the logged-in user's name
-    date: new Date()
+      comment: newReview.value.comment,
+      reviewerName: "Anonymous User", // In a real app, you'd use the logged-in user's name
+      reviewerEmail: "anonymous@example.com", // In a real app, you'd use the logged-in user's email
+      date: new Date().toISOString()
+    }
+
+    if (product.value) {
+      product.value.reviews.push(review)
+    }
+
+    // Reset the form
+    newReview.value = {
+      rating: 0,
+      comment: ''
+    }
+
+    // Show a success message or update UI as needed
   }
-
-  reviews.value.push(review)
-
-  // Reset the form
-  newReview.value = {
-    rating: 0,
-    comment: ''
-  }
-
-  // Show a success message or update UI as needed
-}
 </script>
