@@ -21,6 +21,17 @@ export const useCartStore = defineStore('cart', () => {
     }
   }
 
+  // Add this new method
+  const removeOneFromCart = (productId: number) => {
+    const existingItem = items.value.find(item => item.id === productId)
+    if (existingItem) {
+      existingItem.quantity--
+      if (existingItem.quantity === 0) {
+        removeFromCart(productId)
+      }
+    }
+  }
+
   const updateQuantity = (productId: number, quantity: number) => {
     const item = items.value.find(item => item.id === productId)
     if (item) {
@@ -43,5 +54,15 @@ export const useCartStore = defineStore('cart', () => {
     return items.value.reduce((sum, item) => sum + item.quantity, 0)
   })
 
-  return { items, addToCart, removeFromCart, updateQuantity, getItemQuantity, cartItems, total, itemCount }
+  return { 
+    items, 
+    addToCart, 
+    removeFromCart, 
+    removeOneFromCart, // Add this new method to the return object
+    updateQuantity, 
+    getItemQuantity, 
+    cartItems, 
+    total, 
+    itemCount 
+  }
 })

@@ -276,9 +276,9 @@
             <button 
               v-for="(image, index) in selectedProduct.images" 
               :key="index" 
-              @click="setCurrentImage(index)"
-              class="flex-shrink-0 w-20 h-20 rounded-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              :class="{ 'ring-2 ring-indigo-500': currentImageIndex === index }"
+              @click="setCurrentImage(index)" 
+              class="flex-shrink-0 w-20 h-20 rounded-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+              :class="{ 'ring-2 ring-indigo-500': currentImageIndex === index }" 
               :ref="el => { if (el) thumbnailRefs[index] = el as HTMLElement }"
             >
               <img :src="image" :alt="`${selectedProduct.title} - Image ${index + 1}`" class="w-full h-full object-cover">
@@ -294,46 +294,81 @@
           </div>
           <p class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-4">${{ selectedProduct.price.toFixed(2) }}</p>
           
-          <!-- Add this section to display current cart quantity -->
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-gray-600 dark:text-gray-400">
-              In cart: {{ currentCartQuantity }}
-            </span>
-            <span v-if="currentCartQuantity > 0" class="text-gray-600 dark:text-gray-400">
-              Subtotal: ${{ (selectedProduct.price * currentCartQuantity).toFixed(2) }}
-            </span>
+          <!-- Replace the existing subtotal section with this improved version -->
+          <div class="mt-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-inner">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-lg font-semibold text-gray-700 dark:text-gray-300">Subtotal:</span>
+              <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                ${{ (selectedProduct.price * currentCartQuantity).toFixed(2) }}
+              </span>
+            </div>
+            <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+              <span>${{ selectedProduct.price.toFixed(2) }} each</span>
+              <span>{{ currentCartQuantity }} item{{ currentCartQuantity !== 1 ? 's' : '' }} in cart</span>
+            </div>
           </div>
-
-          <button @click="addToCart(selectedProduct)" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform hover:scale-105">
+          
+          <!-- Cart interaction buttons -->
+          <div class="mt-4 flex items-center justify-between">
+    <div class="flex items-center">
+      <button 
+        @click="decrementQuantity(selectedProduct)" 
+        class="px-3 py-1 text-gray-300 bg-gray-700 hover:bg-gray-600 transition duration-200 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:z-10"
+      >
+        -
+      </button>
+      <span class="px-3 py-1 text-gray-300 bg-gray-800">
+        {{ currentCartQuantity }}
+      </span>
+      <button 
+        @click="incrementQuantity(selectedProduct)" 
+        class="px-3 py-1 text-gray-300 bg-gray-700 hover:bg-gray-600 transition duration-200 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:z-10"
+      >
+        +
+      </button>
+    </div>
+    <button 
+      @click="removeFromCart(selectedProduct)" 
+      class="text-red-500 hover:text-red-600 transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 rounded-md"
+    >
+      Remove
+    </button>
+  </div>
+          
+          <!-- Add to Cart button (only shown when item is not in cart) -->
+          <button 
+            v-if="currentCartQuantity === 0"
+            @click="addToCartFromDetails(selectedProduct)" 
+            class="mt-4 w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 text-lg font-semibold"
+          >
             Add to Cart
           </button>
-          <p v-if="recentlyAddedProduct === selectedProduct" class="mt-2 text-green-500 text-center">
-            Added to cart!
-          </p>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Add this at the end of your template -->
+  <ToastNotification 
+    :show="showToast" 
+    :product-name="recentlyAddedProduct?.title || ''" 
+    @close="closeToast"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watchEffect, onUnmounted, watch, nextTick } from 'vue'
 import { debounce } from 'lodash-es'
 import { useProductStore } from '@/stores/products'
-import { useCartStore } from '../stores/cart'
+import { useCartStore } from '@/stores/cart'
 import type { Product } from '@/types/product'
+import ToastNotification from '@/components/ToastNotification.vue'
 
 const productStore = useProductStore()
 const cartStore = useCartStore()
 
-onMounted(async () => {
-  await productStore.fetchProducts()
-  resetFilters() // Initialize filters with all products
-})
-
 const searchQuery = ref('')
 const selectedCategories = ref<string[]>([])
-const priceRange = ref([0, 1000]) // Default range
 const minPrice = ref(0)
 const maxPrice = ref(1000)
 const minRating = ref(0)
@@ -342,7 +377,13 @@ const isCartOpen = ref(false)
 const lastAddedProductId = ref<number | null>(null)
 const showSuggestions = ref(false)
 const currentPage = ref(1)
-const itemsPerPage = ref(12) // Adjust this number as needed
+const itemsPerPage = ref(12)
+const selectedProduct = ref<Product | null>(null)
+const currentImageIndex = ref(0)
+const thumbnailContainer = ref<HTMLElement | null>(null)
+const thumbnailRefs = ref<HTMLElement[]>([])
+const recentlyAddedProduct = ref<Product | null>(null)
+const showToast = ref(false)
 
 const sortOptions = ref([
   { value: 'default', label: 'Default', icon: '⇅' },
@@ -350,6 +391,23 @@ const sortOptions = ref([
   { value: 'priceHighToLow', label: 'Price: High to Low', icon: '↓' },
   { value: 'rating', label: 'Rating', icon: '⭐' }
 ])
+
+const availableFilters = ref([
+  { id: 'category', label: 'Category', active: true },
+  { id: 'price', label: 'Price Range', active: true },
+  { id: 'rating', label: 'Minimum Rating', active: true },
+  { id: 'sort', label: 'Sort By', active: true }
+])
+
+onMounted(async () => {
+  await productStore.fetchProducts()
+  resetFilters()
+  document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 
 const categories = computed(() => {
   return [...new Set(productStore.products.map(product => product.category))]
@@ -361,7 +419,7 @@ const suggestions = computed(() => {
   return productStore.products
     .filter(product => product.title.toLowerCase().includes(query))
     .map(product => product.title)
-    .slice(0, 5) // Limit to 5 suggestions
+    .slice(0, 5)
 })
 
 const filteredProducts = computed(() => {
@@ -397,24 +455,15 @@ const paginatedProducts = computed(() => {
 
 const totalPages = computed(() => Math.ceil(filteredProducts.value.length / itemsPerPage.value))
 
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++
-    scrollToTop()
-  }
-}
+const maxProductPrice = computed(() => {
+  return Math.max(...productStore.products.map(product => product.price), 1000)
+})
 
-const prevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--
-    scrollToTop()
-  }
-}
-
-const goToPage = (page: number) => {
-  currentPage.value = page
-  scrollToTop()
-}
+const currentCartQuantity = computed(() => {
+  if (!selectedProduct.value) return 0
+  const cartItem = cartStore.cartItems.find(item => item.id === selectedProduct.value?.id)
+  return cartItem ? cartItem.quantity : 0
+})
 
 const displayedPages = computed(() => {
   const delta = 2;
@@ -450,6 +499,25 @@ const displayedPages = computed(() => {
   return rangeWithDots;
 })
 
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+    scrollToTop()
+  }
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+    scrollToTop()
+  }
+}
+
+const goToPage = (page: number) => {
+  currentPage.value = page
+  scrollToTop()
+}
+
 const applyFilters = () => {
   currentPage.value = 1
   scrollToTop()
@@ -461,7 +529,6 @@ const resetFilters = () => {
   scrollToTop()
   searchQuery.value = ''
   selectedCategories.value = []
-  priceRange.value = [0, maxProductPrice.value]
   minPrice.value = 0
   maxPrice.value = maxProductPrice.value
   minRating.value = 0
@@ -471,13 +538,30 @@ const resetFilters = () => {
 
 const addToCart = (product: Product) => {
   cartStore.addToCart(product)
-  isCartOpen.value = true
   lastAddedProductId.value = product.id
-  recentlyAddedProduct.value = product
+  isCartOpen.value = true
   setTimeout(() => {
     lastAddedProductId.value = null
-    recentlyAddedProduct.value = null
-  }, 2000)
+  }, 3000)
+}
+
+const addToCartFromDetails = (product: Product) => {
+  const initialQuantity = cartStore.getItemQuantity(product.id)
+  cartStore.addToCart(product)
+  
+  // Show toast only if this is the first time the item is added
+  if (initialQuantity === 0) {
+    recentlyAddedProduct.value = product
+    showToast.value = true
+    setTimeout(() => {
+      recentlyAddedProduct.value = null
+      showToast.value = false
+    }, 3000)
+  }
+}
+
+const closeToast = () => {
+  showToast.value = false
 }
 
 const toggleCart = () => {
@@ -492,15 +576,6 @@ const selectSuggestion = (suggestion: string) => {
 
 const debouncedApplyFilters = debounce(applyFilters, 300)
 
-watchEffect(() => {
-  searchQuery.value
-  selectedCategories.value
-  priceRange.value
-  minRating.value
-  sortBy.value
-  debouncedApplyFilters()
-})
-
 const handleClickOutside = (event: MouseEvent) => {
   const searchContainer = document.querySelector('.search-container')
   if (searchContainer && !searchContainer.contains(event.target as Node)) {
@@ -512,40 +587,11 @@ const scrollToTop = () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-const maxProductPrice = computed(() => {
-  return Math.max(...productStore.products.map(product => product.price), 1000)
-})
-
-watch(() => productStore.products, () => {
-  const highestPrice = Math.max(...productStore.products.map(product => product.price), 1000)
-  priceRange.value = [0, highestPrice]
-  minPrice.value = 0
-  maxPrice.value = highestPrice
-}, { immediate: true })
-
 const updatePriceRange = () => {
   minPrice.value = 0
-  priceRange.value = [minPrice.value, maxPrice.value]
   debouncedApplyFilters()
 }
 
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-})
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside)
-})
-
-// Update the availableFilters ref
-const availableFilters = ref([
-  { id: 'category', label: 'Category', active: true },
-  { id: 'price', label: 'Price Range', active: true },
-  { id: 'rating', label: 'Minimum Rating', active: true },
-  { id: 'sort', label: 'Sort By', active: true }
-])
-
-// Update the toggleFilter function
 const toggleFilter = (filterId: string) => {
   const filter = availableFilters.value.find(f => f.id === filterId)
   if (filter) {
@@ -553,7 +599,6 @@ const toggleFilter = (filterId: string) => {
   }
 }
 
-// Add a function to handle star rating selection
 const setMinRating = (rating: number) => {
   minRating.value = minRating.value === rating ? 0 : rating
 }
@@ -566,12 +611,6 @@ const toggleCategory = (category: string) => {
     selectedCategories.value.push(category)
   }
 }
-
-const selectedProduct = ref<Product | null>(null)
-const currentImageIndex = ref(0)
-const thumbnailContainer = ref<HTMLElement | null>(null)
-const thumbnailRefs = ref<HTMLElement[]>([])
-const recentlyAddedProduct = ref<Product | null>(null)
 
 const prevImage = () => {
   if (selectedProduct.value) {
@@ -601,10 +640,10 @@ const scrollToThumbnail = (index: number) => {
 
 const openProductDetails = (product: Product) => {
   selectedProduct.value = product
-  currentImageIndex.value = 0 // Reset to first image when opening modal
-  thumbnailRefs.value = [] // Reset thumbnail refs
+  currentImageIndex.value = 0
+  thumbnailRefs.value = []
   nextTick(() => {
-    scrollToThumbnail(0) // Scroll to the first thumbnail after the modal has rendered
+    scrollToThumbnail(0)
   })
 }
 
@@ -612,17 +651,38 @@ const closeProductDetails = () => {
   selectedProduct.value = null
 }
 
-const currentCartQuantity = computed(() => {
-  if (!selectedProduct.value) return 0
-  const cartItem = cartStore.cartItems.find(item => item.id === selectedProduct.value?.id)
-  return cartItem ? cartItem.quantity : 0
+const incrementQuantity = (product: Product) => {
+  cartStore.addToCart(product)
+}
+
+const decrementQuantity = (product: Product) => {
+  cartStore.removeOneFromCart(product.id)
+}
+
+const removeFromCart = (product: Product) => {
+  cartStore.removeFromCart(product.id)
+}
+
+watchEffect(() => {
+  searchQuery.value
+  selectedCategories.value
+  minPrice.value
+  maxPrice.value
+  minRating.value
+  sortBy.value
+  debouncedApplyFilters()
 })
+
+watch(() => productStore.products, () => {
+  const highestPrice = Math.max(...productStore.products.map(product => product.price), 1000)
+  minPrice.value = 0
+  maxPrice.value = highestPrice
+}, { immediate: true })
 
 watch(() => cartStore.cartItems, () => {
   // This will trigger a re-computation of currentCartQuantity
   // when the cart items change
 }, { deep: true })
-
 </script>
 
 <style scoped>
@@ -698,5 +758,12 @@ watch(() => cartStore.cartItems, () => {
 /* Smooth scrolling for thumbnail container */
 .product-details-modal .overflow-x-auto {
   scroll-behavior: smooth;
+}
+
+.bg-gray-700 {
+  background-color: #374151;
+}
+.bg-gray-800 {
+  background-color: #1F2937;
 }
 </style>
