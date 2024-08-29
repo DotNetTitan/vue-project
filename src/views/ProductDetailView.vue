@@ -3,13 +3,15 @@
     <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
       <div class="flex flex-col md:flex-row">
         <!-- Product Images -->
-        <div class="md:w-1/2 p-4 md:pl-8"> <!-- Added md:pl-8 for extra padding on larger screens -->
-          <div class="relative overflow-hidden rounded-lg shadow-md" style="padding-top: 100%;">
-            <img 
-              :src="product.images[currentImageIndex]" 
-              :alt="product.title" 
-              class="absolute top-0 left-0 w-full h-full object-contain rounded-lg border border-gray-200 dark:border-gray-700"
-            >
+        <div class="md:w-1/2 p-4 md:pl-8">
+          <div class="relative overflow-hidden rounded-lg shadow-md border border-gray-200 dark:border-gray-700" style="padding-top: 100%;">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <img 
+                :src="product.images[currentImageIndex]" 
+                :alt="product.title" 
+                class="max-w-full max-h-full object-contain"
+              >
+            </div>
           </div>
           <!-- Image Navigation -->
           <div class="flex justify-between mt-4">
@@ -30,8 +32,8 @@
               v-for="(image, index) in product.images" 
               :key="index" 
               @click="setCurrentImage(index)" 
-              class="flex-shrink-0 w-20 h-20 rounded-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-              :class="{ 'ring-2 ring-indigo-500': currentImageIndex === index }"
+              class="flex-shrink-0 w-20 h-20 rounded-md overflow-hidden focus:outline-none border-2 transition-colors duration-200"
+              :class="currentImageIndex === index ? 'border-indigo-500' : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300'"
             >
               <img :src="image" :alt="`${product.title} - Image ${index + 1}`" class="w-full h-full object-cover">
             </button>

@@ -283,17 +283,17 @@
             </svg>
           </button>
           <div class="flex space-x-2 overflow-x-auto mt-4 pb-2" ref="thumbnailContainer">
-            <button 
-              v-for="(image, index) in selectedProduct.images" 
-              :key="index" 
-              @click="setCurrentImage(index)" 
-              class="flex-shrink-0 w-20 h-20 rounded-md overflow-hidden focus:outline-none focus:ring-2 focus:ring-indigo-500" 
-              :class="{ 'ring-2 ring-indigo-500': currentImageIndex === index }" 
-              :ref="el => { if (el) thumbnailRefs[index] = el as HTMLElement }"
-            >
-              <img :src="image" :alt="`${selectedProduct.title} - Image ${index + 1}`" class="w-full h-full object-cover">
-            </button>
-          </div>
+  <button 
+    v-for="(image, index) in selectedProduct.images" 
+    :key="index" 
+    @click="setCurrentImage(index)" 
+    class="flex-shrink-0 w-20 h-20 rounded-md overflow-hidden focus:outline-none border-2 transition-colors duration-200"
+    :class="currentImageIndex === index ? 'border-indigo-500' : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300'"
+    :ref="el => { if (el) thumbnailRefs[index] = el as HTMLElement }"
+  >
+    <img :src="image" :alt="`${selectedProduct.title} - Image ${index + 1}`" class="w-full h-full object-cover">
+  </button>
+</div>
         </div>
         <div class="flex-1 flex flex-col h-full">
           <div class="flex-grow">
