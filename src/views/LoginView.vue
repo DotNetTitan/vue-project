@@ -32,7 +32,7 @@
         <RouterLink to="/forgot-password" class="block font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">Forgot your password?</RouterLink>
         <p class="text-sm text-gray-600 dark:text-gray-400">
           Don't have an account? 
-          <RouterLink to="/register" class="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300">Sign up</RouterLink>
+          <RouterLink to="/register" class="font-medium text-green-600 hover:text-green-500 dark:text-green-400 dark:hover:text-green-300">Sign up</RouterLink>
         </p>
       </div>
     </div>

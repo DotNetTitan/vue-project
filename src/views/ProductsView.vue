@@ -116,8 +116,11 @@
                 type="text"
                 placeholder="Search products..."
                 class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md pl-10 pr-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200"
-                @input="debouncedApplyFilters"
+                @input="handleInput"
                 @focus="showSuggestions = true"
+                @keydown.down.prevent="navigateSuggestion('down')"
+                @keydown.up.prevent="navigateSuggestion('up')"
+                @keydown.enter.prevent="selectSuggestionByKeyboard"
               >
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -126,7 +129,11 @@
               </div>
             </div>
             <ul v-if="showSuggestions && suggestions.length > 0" class="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-auto">
-              <li v-for="suggestion in suggestions" :key="suggestion" @click="selectSuggestion(suggestion)" class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+              <li v-for="(suggestion, index) in suggestions" 
+                  :key="suggestion" 
+                  @click="selectSuggestion(suggestion)"
+                  :class="{'bg-indigo-100 dark:bg-indigo-700': index === selectedSuggestionIndex}"
+                  class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
                 {{ suggestion }}
               </li>
             </ul>
@@ -395,6 +402,7 @@ const thumbnailContainer = ref<HTMLElement | null>(null)
 const thumbnailRefs = ref<HTMLElement[]>([])
 const recentlyAddedProduct = ref<Product | null>(null)
 const showToast = ref(false)
+const selectedSuggestionIndex = ref(-1)
 
 const sortOptions = ref([
   { value: 'default', label: 'Default', icon: '⇅' },
@@ -582,7 +590,24 @@ const toggleCart = () => {
 const selectSuggestion = (suggestion: string) => {
   searchQuery.value = suggestion
   showSuggestions.value = false
+  selectedSuggestionIndex.value = -1
   debouncedApplyFilters()
+}
+
+const navigateSuggestion = (direction: 'up' | 'down') => {
+  if (direction === 'down') {
+    selectedSuggestionIndex.value = (selectedSuggestionIndex.value + 1) % suggestions.value.length
+  } else {
+    selectedSuggestionIndex.value = (selectedSuggestionIndex.value - 1 + suggestions.value.length) % suggestions.value.length
+  }
+}
+
+const selectSuggestionByKeyboard = () => {
+  if (selectedSuggestionIndex.value !== -1) {
+    selectSuggestion(suggestions.value[selectedSuggestionIndex.value])
+  } else {
+    debouncedApplyFilters()
+  }
 }
 
 const debouncedApplyFilters = debounce(applyFilters, 300)
@@ -591,6 +616,7 @@ const handleClickOutside = (event: MouseEvent) => {
   const searchContainer = document.querySelector('.search-container')
   if (searchContainer && !searchContainer.contains(event.target as Node)) {
     showSuggestions.value = false
+    selectedSuggestionIndex.value = -1
   }
 }
 
@@ -674,6 +700,12 @@ const removeFromCart = (product: Product) => {
   cartStore.removeFromCart(product.id)
 }
 
+const handleInput = () => {
+  showSuggestions.value = true
+  selectedSuggestionIndex.value = -1
+  debouncedApplyFilters()
+}
+
 watchEffect(() => {
   searchQuery.value
   selectedCategories.value
@@ -694,6 +726,10 @@ watch(() => cartStore.cartItems, () => {
   // This will trigger a re-computation of currentCartQuantity
   // when the cart items change
 }, { deep: true })
+
+watch(suggestions, () => {
+  selectedSuggestionIndex.value = -1
+})
 </script>
 
 <style scoped>
