@@ -154,7 +154,10 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             <div v-for="product in paginatedProducts" :key="product.id" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:scale-105 flex flex-col group">
               <div class="relative">
-                <img :src="product.image" :alt="product.title" class="w-full h-64 object-cover">
+                <img :src="product.thumbnail" :alt="product.title" class="w-full h-64 object-cover">
+                <div class="absolute top-0 left-0 bg-green-500 text-white px-3 py-1 m-2 rounded-full text-sm font-semibold">
+                  {{ product.discountPercentage.toFixed(0) }}% off
+                </div>
                 <div class="absolute top-0 right-0 bg-indigo-500 text-white px-3 py-1 m-2 rounded-full text-sm font-semibold">
                   ${{ product.price.toFixed(2) }}
                 </div>
@@ -169,7 +172,7 @@
                 <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2 flex-grow">{{ product.description }}</p>
                 <div class="flex items-center mb-4">
                   <span class="text-yellow-400 mr-1">★</span>
-                  <span class="text-gray-600 dark:text-gray-400">{{ product.rating.rate.toFixed(1) }} ({{ product.rating.count }})</span>
+                  <span class="text-gray-600 dark:text-gray-400">{{ product.rating.toFixed(1) }} ({{ product.reviews.length }})</span>
                 </div>
                 <button @click="addToCart(product)" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform hover:scale-105">
                   Add to Cart
@@ -298,7 +301,7 @@
             <p class="text-gray-600 dark:text-gray-400 mb-6 flex-grow overflow-y-auto max-h-48">{{ selectedProduct.description }}</p>
             <div class="flex items-center mb-6">
               <span class="text-yellow-400 mr-1">★</span>
-              <span class="text-gray-600 dark:text-gray-400">{{ selectedProduct.rating.rate.toFixed(1) }} ({{ selectedProduct.rating.count }} reviews)</span>
+              <span class="text-gray-600 dark:text-gray-400">{{ selectedProduct.rating.toFixed(1) }} ({{ selectedProduct.reviews.length }} reviews)</span>
             </div>
             <p class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-6">${{ selectedProduct.price.toFixed(2) }}</p>
           </div>
@@ -449,7 +452,7 @@ const filteredProducts = computed(() => {
         product.description.toLowerCase().includes(searchQuery.value.toLowerCase())
       const categoryMatch = selectedCategories.value.length === 0 || selectedCategories.value.includes(product.category)
       const priceMatch = product.price >= minPrice.value && product.price <= maxPrice.value
-      const ratingMatch = product.rating.rate >= minRating.value
+      const ratingMatch = product.rating >= minRating.value
       return searchMatch && categoryMatch && priceMatch && ratingMatch
     })
     .sort((a: Product, b: Product) => {
@@ -459,7 +462,7 @@ const filteredProducts = computed(() => {
         case 'priceHighToLow':
           return b.price - a.price
         case 'rating':
-          return b.rating.rate - a.rating.rate
+          return b.rating - a.rating
         default:
           return 0
       }
@@ -756,7 +759,7 @@ watch(suggestions, () => {
 }
 
 .overflow-x-auto::-webkit-scrollbar {
-  height: 10px; /* Increased from 6px to 10px */
+  height: 10px;
 }
 
 .overflow-x-auto::-webkit-scrollbar-track {
@@ -765,7 +768,7 @@ watch(suggestions, () => {
 
 .overflow-x-auto::-webkit-scrollbar-thumb {
   background-color: rgba(156, 163, 175, 0.5);
-  border-radius: 5px; /* Increased from 3px to 5px */
+  border-radius: 5px;
 }
 
 .overflow-x-auto::-webkit-scrollbar-thumb:hover {
@@ -794,6 +797,17 @@ watch(suggestions, () => {
 
 .product-details-modal::-webkit-scrollbar-thumb:hover {
   background-color: rgba(156, 163, 175, 0.7);
+}
+
+/* Add these new styles for the arrow buttons */
+.product-details-modal button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+/* Smooth scrolling for thumbnail container */
+.product-details-modal .overflow-x-auto {
+  scroll-behavior: smooth;
 }
 
 /* Add these new styles for the arrow buttons */

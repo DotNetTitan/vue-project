@@ -6,12 +6,17 @@ export const useProductStore = defineStore('product', () => {
   const products = ref<Product[]>([])
 
   const fetchProducts = async () => {
-    const response = await fetch('https://fakestoreapi.com/products')
-    const data = await response.json()
-    products.value = data.map((product: Product) => ({
-      ...product,
-      images: [product.image, product.image, product.image,product.image, product.image, product.image,product.image, product.image, product.image] // Add dummy images for testing
-    }))
+    try {
+      const response = await fetch('https://dummyjson.com/products?limit=100')
+      if (!response.ok) {
+        throw new Error('Failed to fetch products')
+      }
+      const data = await response.json()
+      products.value = data.products
+    } catch (error) {
+      console.error('Error fetching products:', error)
+      products.value = []
+    }
   }
 
   const getProductById = (id: number) => {

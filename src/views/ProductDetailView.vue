@@ -44,42 +44,20 @@
             <div class="flex items-center mb-4">
               <div class="flex items-center">
                 <span class="text-yellow-400 mr-1">★</span>
-                <span class="text-gray-600 dark:text-gray-400">{{ product.rating.rate.toFixed(1) }} ({{ product.rating.count }} reviews)</span>
+                <span class="text-gray-600 dark:text-gray-400">{{ product.rating.toFixed(1) }}</span>
               </div>
             </div>
             <p class="text-gray-600 dark:text-gray-400 mb-6">{{ product.description }}</p>
-            <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-6">${{ product.price.toFixed(2) }}</p>
-  
-            <!-- Size Selection -->
-            <div class="mb-6">
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Size</h3>
-              <div class="flex space-x-2">
-                <button 
-                  v-for="size in ['XS', 'S', 'M', 'L', 'XL']" 
-                  :key="size"
-                  @click="selectedSize = size"
-                  :class="{'bg-indigo-600 text-white': selectedSize === size, 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300': selectedSize !== size}"
-                  class="px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 hover:bg-indigo-500 hover:text-white"
-                >
-                  {{ size }}
-                </button>
-              </div>
+            <div class="flex items-center mb-6">
+              <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">${{ discountedPrice.toFixed(2) }}</p>
+              <p class="ml-2 text-lg text-gray-500 line-through">${{ product.price.toFixed(2) }}</p>
+              <p class="ml-2 text-lg text-green-500">{{ product.discountPercentage.toFixed(0) }}% off</p>
             </div>
   
-            <!-- Color Selection -->
-            <div class="mb-6">
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Color</h3>
-              <div class="flex space-x-2">
-                <button 
-                  v-for="color in ['Red', 'Blue', 'Green', 'Yellow', 'Black']" 
-                  :key="color"
-                  @click="selectedColor = color"
-                  :class="{'ring-2 ring-offset-2 ring-indigo-500': selectedColor === color}"
-                  class="w-8 h-8 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  :style="{ backgroundColor: color.toLowerCase() }"
-                ></button>
-              </div>
-            </div>
+            <!-- Stock Information -->
+            <p class="text-gray-600 dark:text-gray-400 mb-6">
+              Stock: {{ product.stock }} available
+            </p>
   
             <!-- Add to Cart -->
             <div class="flex items-center mb-6">
@@ -108,31 +86,31 @@
                 <span class="font-semibold">Category:</span> {{ product.category }}
               </p>
               <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                <span class="font-semibold">SKU:</span> {{ generateSKU(product.id) }}
+                <span class="font-semibold">Brand:</span> {{ product.brand }}
               </p>
             </div>
           </div>
         </div>
   
         <!-- Reviews Section -->
-        <div class="p-4 md:p-6 border-t border-gray-200 dark:border-gray-700">
+        <div class="mt-8 p-4 md:p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
           <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Customer Reviews</h2>
           
           <!-- Review List -->
           <div v-if="reviews.length > 0" class="space-y-4 mb-6">
-            <div v-for="review in reviews" :key="review.id" class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+            <div v-for="review in reviews" :key="review.id" class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
               <div class="flex items-center mb-2">
                 <span class="text-yellow-400 mr-1">★</span>
                 <span class="font-semibold text-gray-900 dark:text-white">{{ review.rating.toFixed(1) }}</span>
               </div>
-              <p class="text-gray-600 dark:text-gray-400 mb-2">{{ review.comment }}</p>
-              <p class="text-sm text-gray-500 dark:text-gray-500">By {{ review.user }} on {{ formatDate(review.date) }}</p>
+              <p class="text-gray-600 dark:text-gray-300 mb-2">{{ review.comment }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">By {{ review.user }} on {{ formatDate(review.date) }}</p>
             </div>
           </div>
           <p v-else class="text-gray-600 dark:text-gray-400 mb-4">No reviews yet. Be the first to review this product!</p>
   
           <!-- Add Review Form -->
-          <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+          <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Write a Review</h3>
             <form @submit.prevent="submitReview">
               <div class="mb-4">
@@ -146,7 +124,7 @@
                     class="focus:outline-none"
                   >
                     <svg 
-                      :class="{'text-yellow-400': star <= newReview.rating, 'text-gray-300 dark:text-gray-600': star > newReview.rating}"
+                      :class="{'text-yellow-400': star <= newReview.rating, 'text-gray-300 dark:text-gray-500': star > newReview.rating}"
                       class="w-8 h-8 transition-colors duration-200"
                       fill="currentColor"
                       viewBox="0 0 20 20"
@@ -163,7 +141,7 @@
                   v-model="newReview.comment"
                   id="comment"
                   rows="4"
-                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 dark:bg-gray-600 dark:border-gray-500 dark:text-white"
                   placeholder="Write your review here..."
                 ></textarea>
               </div>
@@ -194,8 +172,6 @@
   
   const product = ref<Product | null>(null)
   const currentImageIndex = ref(0)
-  const selectedSize = ref('M')
-  const selectedColor = ref('Black')
   const quantity = ref(1)
   
   const reviews = ref([
@@ -214,6 +190,13 @@
   const fetchedProduct = productStore.getProductById(productId)
   product.value = fetchedProduct || null
 })
+  
+  const discountedPrice = computed(() => {
+    if (product.value) {
+      return product.value.price * (1 - product.value.discountPercentage / 100)
+    }
+    return 0
+  })
   
   const prevImage = () => {
     if (currentImageIndex.value > 0) {
@@ -236,7 +219,9 @@
   }
   
   const incrementQuantity = () => {
-    quantity.value++
+    if (product.value && quantity.value < product.value.stock) {
+      quantity.value++
+    }
   }
   
   const decrementQuantity = () => {
@@ -246,20 +231,14 @@
   }
   
   const addToCart = () => {
-    if (product.value) {
-      cartStore.addToCart({
-        ...product.value,
-        size: selectedSize.value,
-        color: selectedColor.value,
-        quantity: quantity.value
-      })
-      // Show a success message or update UI as needed
-    }
+  if (product.value) {
+    cartStore.addToCart({
+      ...product.value,
+      quantity: quantity.value
+    } as Product & { quantity: number })
+    // Show a success message or update UI as needed
   }
-  
-  const generateSKU = (id: number) => {
-    return `PROD-${id.toString().padStart(5, '0')}`
-  }
+}
   
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
