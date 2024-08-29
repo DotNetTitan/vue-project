@@ -1,8 +1,13 @@
+import type { Review } from './review';
+
 export interface Product {
   id: number;
   title: string;
   description: string;
   price: number;
+  size: string;
+  color: string;
+  quantity: number;
   category: string;
   image: string;
   images: string[]; // Add this line
@@ -10,4 +15,5 @@ export interface Product {
     rate: number;
     count: number;
   };
+  reviews: Review[];
 }

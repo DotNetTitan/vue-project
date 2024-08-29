@@ -338,13 +338,21 @@
             </div>
             
             <!-- Add to Cart button (only shown when item is not in cart) -->
-            <button 
-              v-if="currentCartQuantity === 0"
-              @click="addToCartFromDetails(selectedProduct)" 
-              class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 text-lg font-semibold"
-            >
-              Add to Cart
-            </button>
+            <div class="mt-6 flex justify-between items-center">
+              <button 
+                v-if="currentCartQuantity === 0"
+                @click="addToCartFromDetails(selectedProduct)" 
+                class="flex-grow bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 text-lg font-semibold mr-2"
+              >
+                Add to Cart
+              </button>
+              <router-link 
+                :to="{ name: 'ProductDetail', params: { id: selectedProduct.id } }"
+                class="flex-grow bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-center text-lg font-semibold"
+              >
+                View Full Details
+              </router-link>
+            </div>
           </div>
         </div>
       </div>
