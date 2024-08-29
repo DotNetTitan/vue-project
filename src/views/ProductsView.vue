@@ -293,9 +293,23 @@
             <span class="text-gray-600 dark:text-gray-400">{{ selectedProduct.rating.rate.toFixed(1) }} ({{ selectedProduct.rating.count }} reviews)</span>
           </div>
           <p class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-4">${{ selectedProduct.price.toFixed(2) }}</p>
+          
+          <!-- Add this section to display current cart quantity -->
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-gray-600 dark:text-gray-400">
+              In cart: {{ currentCartQuantity }}
+            </span>
+            <span v-if="currentCartQuantity > 0" class="text-gray-600 dark:text-gray-400">
+              Subtotal: ${{ (selectedProduct.price * currentCartQuantity).toFixed(2) }}
+            </span>
+          </div>
+
           <button @click="addToCart(selectedProduct)" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform hover:scale-105">
             Add to Cart
           </button>
+          <p v-if="recentlyAddedProduct === selectedProduct" class="mt-2 text-green-500 text-center">
+            Added to cart!
+          </p>
         </div>
       </div>
     </div>
@@ -459,10 +473,11 @@ const addToCart = (product: Product) => {
   cartStore.addToCart(product)
   isCartOpen.value = true
   lastAddedProductId.value = product.id
+  recentlyAddedProduct.value = product
   setTimeout(() => {
     lastAddedProductId.value = null
+    recentlyAddedProduct.value = null
   }, 2000)
-  closeProductDetails()
 }
 
 const toggleCart = () => {
@@ -556,6 +571,7 @@ const selectedProduct = ref<Product | null>(null)
 const currentImageIndex = ref(0)
 const thumbnailContainer = ref<HTMLElement | null>(null)
 const thumbnailRefs = ref<HTMLElement[]>([])
+const recentlyAddedProduct = ref<Product | null>(null)
 
 const prevImage = () => {
   if (selectedProduct.value) {
@@ -595,6 +611,17 @@ const openProductDetails = (product: Product) => {
 const closeProductDetails = () => {
   selectedProduct.value = null
 }
+
+const currentCartQuantity = computed(() => {
+  if (!selectedProduct.value) return 0
+  const cartItem = cartStore.cartItems.find(item => item.id === selectedProduct.value?.id)
+  return cartItem ? cartItem.quantity : 0
+})
+
+watch(() => cartStore.cartItems, () => {
+  // This will trigger a re-computation of currentCartQuantity
+  // when the cart items change
+}, { deep: true })
 
 </script>
 
