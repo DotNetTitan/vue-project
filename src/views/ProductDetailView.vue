@@ -137,8 +137,8 @@
           <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Customer Reviews</h2>
           
           <!-- Review List -->
-          <div v-if="product.reviews.length > 0" class="space-y-4 mb-6">
-            <div v-for="review in product.reviews" :key="review.reviewerEmail" class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+          <div v-if="paginatedReviews.length > 0" class="space-y-4 mb-6">
+            <div v-for="review in paginatedReviews" :key="review.reviewerEmail" class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
               <div class="flex items-center mb-2">
                 <span class="text-yellow-400 mr-1">★</span>
                 <span class="font-semibold text-gray-900 dark:text-white">{{ review.rating.toFixed(1) }}</span>
@@ -148,7 +148,26 @@
             </div>
           </div>
           <p v-else class="text-gray-600 dark:text-gray-400 mb-4">No reviews yet. Be the first to review this product!</p>
-  
+          
+          <!-- Pagination -->
+          <div v-if="totalPages > 1" class="flex justify-center mt-6">
+            <button 
+              @click="prevPage" 
+              :disabled="currentPage === 1"
+              class="px-4 py-2 mr-2 bg-gray-200 dark:bg-gray-700 rounded-md disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span class="px-4 py-2">Page {{ currentPage }} of {{ totalPages }}</span>
+            <button 
+              @click="nextPage" 
+              :disabled="currentPage === totalPages"
+              class="px-4 py-2 ml-2 bg-gray-200 dark:bg-gray-700 rounded-md disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+          
           <!-- Add Review Form -->
           <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Write a Review</h3>
@@ -218,6 +237,33 @@
     rating: 0,
     comment: ''
   })
+  
+  const currentPage = ref(1)
+  const reviewsPerPage = 10 // You can adjust this number as needed
+
+  const paginatedReviews = computed(() => {
+    if (!product.value) return []
+    const start = (currentPage.value - 1) * reviewsPerPage
+    const end = start + reviewsPerPage
+    return product.value.reviews.slice(start, end)
+  })
+
+  const totalPages = computed(() => {
+    if (!product.value) return 0
+    return Math.ceil(product.value.reviews.length / reviewsPerPage)
+  })
+
+  const nextPage = () => {
+    if (currentPage.value < totalPages.value) {
+      currentPage.value++
+    }
+  }
+
+  const prevPage = () => {
+    if (currentPage.value > 1) {
+      currentPage.value--
+    }
+  }
   
   onMounted(async () => {
   const productId = Number(route.params.id)
