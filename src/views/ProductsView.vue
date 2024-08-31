@@ -253,7 +253,7 @@
     </svg>
   </button>
 
- <!-- Product Details Modal -->
+<!-- Product Details Modal -->
 <div v-if="selectedProduct" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
   <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 md:p-8 max-w-4xl w-full mx-auto relative overflow-y-auto max-h-[90vh] product-details-modal">
     <button @click="closeProductDetails" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
@@ -310,47 +310,64 @@
         </div>
         
         <div class="mt-auto">
-          <div class="flex items-center mb-4">
-            <div v-if="currentCartQuantity > 0" class="flex items-center border border-gray-300 dark:border-gray-600 rounded-md">
+          <div v-if="currentCartQuantity > 0" class="mb-4">
+            <div class="flex items-center mb-4">
+              <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-md">
+                <button 
+                  @click="decrementQuantity(selectedProduct)" 
+                  class="px-3 py-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >-</button>
+                <span class="px-3 py-1 text-gray-800 dark:text-gray-200">{{ currentCartQuantity }}</span>
+                <button 
+                  @click="incrementQuantity(selectedProduct)" 
+                  class="px-3 py-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  :disabled="currentCartQuantity >= selectedProduct.stock"
+                >+</button>
+              </div>
               <button 
-                @click="decrementQuantity(selectedProduct)" 
-                class="px-3 py-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-              >-</button>
-              <span class="px-3 py-1 text-gray-800 dark:text-gray-200">{{ currentCartQuantity }}</span>
-              <button 
-                @click="incrementQuantity(selectedProduct)" 
-                class="px-3 py-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
-                :disabled="currentCartQuantity >= selectedProduct.stock"
-              >+</button>
+                @click="removeFromCart(selectedProduct)" 
+                class="ml-2 px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
+              >
+                Remove
+              </button>
             </div>
-            <button 
-              v-if="currentCartQuantity > 0"
-              @click="removeFromCart(selectedProduct)" 
-              class="ml-2 px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
+            
+            <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg mb-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-lg font-semibold text-gray-700 dark:text-gray-300">Subtotal:</span>
+                <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                  ${{ (discountedPrice * currentCartQuantity).toFixed(2) }}
+                </span>
+              </div>
+              <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+                <span>${{ discountedPrice.toFixed(2) }} each</span>
+                <span>{{ currentCartQuantity }} item{{ currentCartQuantity !== 1 ? 's' : '' }} in cart</span>
+              </div>
+            </div>
+
+            <router-link 
+              :to="{ name: 'ProductDetail', params: { id: selectedProduct.id } }"
+              class="block w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-center font-semibold"
             >
-              Remove
-            </button>
+              View Full Details
+            </router-link>
+          </div>
+          
+          <div v-else class="flex space-x-4">
             <button 
-              v-else
               @click="addToCartFromDetails(selectedProduct)" 
-              class="flex-grow bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              class="flex-1 bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 font-semibold"
               :disabled="selectedProduct.stock === 0"
             >
               {{ selectedProduct.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
             </button>
-          </div>
-          
-          <div v-if="currentCartQuantity > 0" class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-lg font-semibold text-gray-700 dark:text-gray-300">Subtotal:</span>
-              <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                ${{ (discountedPrice * currentCartQuantity).toFixed(2) }}
-              </span>
-            </div>
-            <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-              <span>${{ discountedPrice.toFixed(2) }} each</span>
-              <span>{{ currentCartQuantity }} item{{ currentCartQuantity !== 1 ? 's' : '' }} in cart</span>
-            </div>
+
+            <router-link 
+              :to="{ name: 'ProductDetail', params: { id: selectedProduct.id } }"
+              class="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 text-center font-semibold"
+            >
+              View Full Details
+            </router-link>
           </div>
         </div>
       </div>
