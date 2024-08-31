@@ -297,16 +297,31 @@
       </div>
       <div class="flex-1 flex flex-col h-full">
         <div class="flex-grow">
-          <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-4">{{ selectedProduct.title }}</h2>
-          <p class="text-gray-600 dark:text-gray-400 mb-6 flex-grow overflow-y-auto max-h-48">{{ selectedProduct.description }}</p>
+          <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-2">{{ selectedProduct.title }}</h2>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">{{ selectedProduct.description }}</p>
+          
           <div class="flex items-center mb-4">
             <span class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">${{ discountedPrice.toFixed(2) }}</span>
             <span class="ml-2 text-lg text-gray-500 line-through">${{ selectedProduct.price.toFixed(2) }}</span>
             <span class="ml-2 text-lg text-green-500">{{ selectedProduct.discountPercentage.toFixed(0) }}% off</span>
           </div>
-          <p class="text-gray-600 dark:text-gray-400 mb-6">
-            Stock: {{ selectedProduct.stock }} available
-          </p>
+          
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Rating:</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">{{ selectedProduct.rating.toFixed(1) }} / 5</p>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Stock:</h3>
+              <p class="text-sm text-gray-600 dark:text-gray-400">{{ selectedProduct.stock }} available</p>
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">Shipping Information:</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400">{{ selectedProduct.shippingInformation }}</p>
+          </div>
+
         </div>
         
         <div class="mt-auto">
