@@ -76,6 +76,13 @@
               >+</button>
             </div>
             <button 
+              v-if="cartQuantity > 0"
+              @click="removeFromCart" 
+              class="ml-2 px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
+            >
+              Remove
+            </button>
+            <button 
               v-else
               @click="addToCart" 
               class="flex-grow bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -276,6 +283,12 @@ const updateCartQuantity = (change: number) => {
     } else if (newQuantity === 0) {
       cartStore.removeFromCart(product.value.id)
     }
+  }
+}
+  
+const removeFromCart = () => {
+  if (product.value) {
+    cartStore.removeFromCart(product.value.id)
   }
 }
   
