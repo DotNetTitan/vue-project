@@ -159,7 +159,7 @@
                   {{ product.discountPercentage.toFixed(0) }}% off
                 </div>
                 <div class="absolute top-0 right-0 bg-indigo-500 text-white px-3 py-1 m-2 rounded-full text-sm font-semibold">
-                  ${{ product.price.toFixed(2) }}
+                  ${{ getDiscountedPrice(product).toFixed(2) }}
                 </div>
                 <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <button @click="openProductDetails(product)" class="bg-white text-gray-800 px-4 py-2 rounded-md hover:bg-gray-100 transition duration-300">
@@ -170,13 +170,53 @@
               <div class="p-6 flex flex-col flex-grow">
                 <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">{{ product.title }}</h2>
                 <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2 flex-grow">{{ product.description }}</p>
-                <div class="flex items-center mb-4">
-                  <span class="text-yellow-400 mr-1">★</span>
-                  <span class="text-gray-600 dark:text-gray-400">{{ product.rating.toFixed(1) }} ({{ product.reviews.length }})</span>
+                <div class="flex items-center justify-between mb-4">
+                  <div class="flex items-center">
+                    <span class="text-yellow-400 mr-1">★</span>
+                    <span class="text-gray-600 dark:text-gray-400">{{ product.rating.toFixed(1) }} ({{ product.reviews.length }})</span>
+                  </div>
+                  <span class="text-gray-600 dark:text-gray-400">Stock: {{ product.stock }}</span>
                 </div>
-                <button @click="addToCart(product)" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform hover:scale-105">
-                  Add to Cart
-                </button>
+                
+                <!-- Add to Cart Section -->
+                <div class="mt-auto">
+                  <div v-if="getCartQuantity(product.id) > 0" class="flex items-center justify-between mb-2">
+                    <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-md">
+                      <button 
+                        @click="updateCartQuantity(product, -1)" 
+                        class="px-3 py-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      >-</button>
+                      <span class="px-3 py-1 text-gray-800 dark:text-gray-200">{{ getCartQuantity(product.id) }}</span>
+                      <button 
+                        @click="updateCartQuantity(product, 1)" 
+                        class="px-3 py-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                        :disabled="getCartQuantity(product.id) >= product.stock"
+                      >+</button>
+                    </div>
+                  </div>
+                  <button 
+                    v-else
+                    @click="addToCart(product)" 
+                    class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform hover:scale-105"
+                    :disabled="product.stock === 0"
+                  >
+                    {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
+                  </button>
+                </div>
+                
+                <!-- Subtotal Section -->
+                <div v-if="getCartQuantity(product.id) > 0" class="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                  <div class="flex justify-between items-center">
+                    <span class="text-lg font-semibold text-gray-700 dark:text-gray-300">Subtotal:</span>
+                    <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                      ${{ (getDiscountedPrice(product) * getCartQuantity(product.id)).toFixed(2) }}
+                    </span>
+                  </div>
+                  <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+                    <span>${{ getDiscountedPrice(product).toFixed(2) }} each</span>
+                    <span>{{ getCartQuantity(product.id) }} item{{ getCartQuantity(product.id) !== 1 ? 's' : '' }} in cart</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -232,14 +272,14 @@
             :class="{'bg-green-100 dark:bg-green-800': item.id === lastAddedProductId}"
             class="flex justify-between items-center p-2 rounded transition-colors duration-500">
           <span class="text-gray-700 dark:text-gray-300">{{ item.title }} (x{{ item.quantity }})</span>
-          <span class="text-gray-600 dark:text-gray-400">${{ (item.price * item.quantity).toFixed(2) }}</span>
+          <span class="text-gray-600 dark:text-gray-400">${{ (getDiscountedPrice(item) * item.quantity).toFixed(2) }}</span>
         </li>
       </ul>
       <p v-else class="text-gray-600 dark:text-gray-400 text-center">Your cart is empty</p>
       <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
         <div class="flex justify-between items-center">
           <span class="font-semibold text-gray-800 dark:text-white">Total:</span>
-          <span class="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">${{ cartStore.total.toFixed(2) }}</span>
+          <span class="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">${{ cartStore.discountedTotal.toFixed(2) }}</span>
         </div>
         <button :disabled="cartStore.cartItems.length === 0" :class="{'opacity-50 cursor-not-allowed': cartStore.cartItems.length === 0}" class="mt-4 w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-indigo-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform hover:scale-105">
           Checkout
@@ -303,70 +343,67 @@
               <span class="text-yellow-400 mr-1">★</span>
               <span class="text-gray-600 dark:text-gray-400">{{ selectedProduct.rating.toFixed(1) }} ({{ selectedProduct.reviews.length }} reviews)</span>
             </div>
-            <p class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-6">${{ selectedProduct.price.toFixed(2) }}</p>
+            <div class="flex items-center mb-4">
+              <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">${{ getDiscountedPrice(selectedProduct).toFixed(2) }}</p>
+              <p class="ml-2 text-lg text-gray-500 line-through">${{ selectedProduct.price.toFixed(2) }}</p>
+              <p class="ml-2 text-lg text-green-500">{{ selectedProduct.discountPercentage.toFixed(0) }}% off</p>
+            </div>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">
+              Stock: {{ selectedProduct.stock }} available
+            </p>
           </div>
           
+          <!-- Add to Cart Section -->
           <div class="mt-auto">
-            <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-inner mb-6">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-lg font-semibold text-gray-700 dark:text-gray-300">Subtotal:</span>
-                <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                  ${{ (selectedProduct.price * currentCartQuantity).toFixed(2) }}
-                </span>
-              </div>
-              <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-                <span>${{ selectedProduct.price.toFixed(2) }} each</span>
-                <span>{{ currentCartQuantity }} item{{ currentCartQuantity !== 1 ? 's' : '' }} in cart</span>
-              </div>
-            </div>
-            
-            <!-- Cart interaction buttons -->
-            <div class="flex items-center justify-between mb-4" v-if="currentCartQuantity > 0">
-              <div class="flex items-center">
+            <div v-if="getCartQuantity(selectedProduct.id) > 0" class="flex items-center justify-between mb-2">
+              <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-md">
                 <button 
-                  @click="decrementQuantity(selectedProduct)" 
-                  class="px-3 py-1 text-gray-300 bg-gray-700 hover:bg-gray-600 transition duration-200 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:z-10"
-                >
-                  -
-                </button>
-                <span class="px-3 py-1 text-gray-300 bg-gray-800">
-                  {{ currentCartQuantity }}
+                  @click="updateCartQuantity(selectedProduct, -1)" 
+                  class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-l-md"
+                >-</button>
+                <span class="px-3 py-1 bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200">
+                  {{ getCartQuantity(selectedProduct.id) }}
                 </span>
                 <button 
-                  @click="incrementQuantity(selectedProduct)" 
-                  class="px-3 py-1 text-gray-300 bg-gray-700 hover:bg-gray-600 transition duration-200 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:z-10"
-                >
-                  +
-                </button>
+                  @click="updateCartQuantity(selectedProduct, 1)" 
+                  class="px-3 py-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-r-md"
+                  :disabled="getCartQuantity(selectedProduct.id) >= selectedProduct.stock"
+                >+</button>
               </div>
-              <button 
-                @click="removeFromCart(selectedProduct)" 
-                class="text-red-500 hover:text-red-600 transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 rounded-md"
-              >
-                Remove
-              </button>
             </div>
-            
-            <!-- Add to Cart button (only shown when item is not in cart) -->
-            <div class="mt-6 flex justify-between items-center">
-              <button 
-                v-if="currentCartQuantity === 0"
-                @click="addToCartFromDetails(selectedProduct)" 
-                class="flex-grow bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 text-lg font-semibold mr-2"
-              >
-                Add to Cart
-              </button>
-              <router-link 
-                :to="{ name: 'ProductDetail', params: { id: selectedProduct.id } }"
-                class="flex-grow bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-center text-lg font-semibold"
-              >
-                View Full Details
-              </router-link>
+            <button 
+              v-else
+              @click="addToCart(selectedProduct)" 
+              class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300"
+              :disabled="selectedProduct.stock === 0"
+            >
+              {{ selectedProduct.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
+            </button>
+          </div>
+          
+          <!-- Subtotal Section -->
+          <div v-if="getCartQuantity(selectedProduct.id) > 0" class="mt-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+            <div class="flex justify-between items-center">
+              <span class="text-lg font-semibold text-gray-700 dark:text-gray-300">Subtotal:</span>
+              <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                ${{ (getDiscountedPrice(selectedProduct) * getCartQuantity(selectedProduct.id)).toFixed(2) }}
+              </span>
+            </div>
+            <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+              <span>${{ getDiscountedPrice(selectedProduct).toFixed(2) }} each</span>
+              <span>{{ getCartQuantity(selectedProduct.id) }} item{{ getCartQuantity(selectedProduct.id) !== 1 ? 's' : '' }} in cart</span>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Add this at the end of your template -->
+    <ToastNotification 
+      :show="showToast" 
+      :product-name="recentlyAddedProduct?.title || ''" 
+      @close="closeToast"
+    />
   </div>
 
   <!-- Add this at the end of your template -->
@@ -561,18 +598,30 @@ const resetFilters = () => {
   availableFilters.value.forEach(filter => filter.active = true)
 }
 
+const getDiscountedPrice = (product: Product) => {
+  return product.price * (1 - product.discountPercentage / 100);
+}
+
 const addToCart = (product: Product) => {
-  cartStore.addToCart(product)
-  lastAddedProductId.value = product.id
-  isCartOpen.value = true
-  setTimeout(() => {
-    lastAddedProductId.value = null
-  }, 3000)
+  if (product.stock > 0) {
+    cartStore.addToCart({
+      ...product,
+      price: getDiscountedPrice(product)
+    })
+    lastAddedProductId.value = product.id
+    isCartOpen.value = true
+    setTimeout(() => {
+      lastAddedProductId.value = null
+    }, 3000)
+  }
 }
 
 const addToCartFromDetails = (product: Product) => {
   const initialQuantity = cartStore.getItemQuantity(product.id)
-  cartStore.addToCart(product)
+  cartStore.addToCart({
+    ...product,
+    price: getDiscountedPrice(product)
+  })
   
   // Show toast only if this is the first time the item is added
   if (initialQuantity === 0) {
@@ -582,6 +631,20 @@ const addToCartFromDetails = (product: Product) => {
       recentlyAddedProduct.value = null
       showToast.value = false
     }, 3000)
+  }
+}
+
+const getCartQuantity = (productId: number) => {
+  return cartStore.getItemQuantity(productId)
+}
+
+
+const updateCartQuantity = (product: Product, change: number) => {
+  const newQuantity = getCartQuantity(product.id) + change
+  if (newQuantity > 0 && newQuantity <= product.stock) {
+    cartStore.updateQuantity(product.id, newQuantity)
+  } else if (newQuantity === 0) {
+    cartStore.removeFromCart(product.id)
   }
 }
 
