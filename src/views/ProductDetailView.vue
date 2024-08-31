@@ -63,25 +63,42 @@
   
           <!-- Add to Cart -->
           <div class="flex items-center mb-6">
-            <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-md">
+            <div v-if="cartQuantity > 0" class="flex items-center border border-gray-300 dark:border-gray-600 rounded-md">
               <button 
-                @click="decrementQuantity" 
+                @click="updateCartQuantity(-1)" 
                 class="px-3 py-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
               >-</button>
-              <span class="px-3 py-1 text-gray-800 dark:text-gray-200">{{ quantity }}</span>
+              <span class="px-3 py-1 text-gray-800 dark:text-gray-200">{{ cartQuantity }}</span>
               <button 
-                @click="incrementQuantity" 
+                @click="updateCartQuantity(1)" 
                 class="px-3 py-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                :disabled="cartQuantity >= product.stock"
               >+</button>
             </div>
             <button 
+              v-else
               @click="addToCart" 
-              class="ml-4 flex-grow bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              class="flex-grow bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              :disabled="product.stock === 0"
             >
-              Add to Cart
+              {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
             </button>
           </div>
-  
+
+          <!-- Subtotal -->
+          <div v-if="cartQuantity > 0" class="mb-6 p-4 bg-gray-700 rounded-lg">
+            <div class="flex justify-between items-center">
+              <div>
+                <span class="text-lg font-semibold text-white">Subtotal:</span>
+                <div class="text-sm text-gray-400">${{ discountedPrice.toFixed(2) }} each</div>
+              </div>
+              <div class="text-right">
+                <span class="text-xl font-bold text-indigo-400">${{ (discountedPrice * cartQuantity).toFixed(2) }}</span>
+                <div class="text-sm text-gray-400">{{ cartQuantity }} {{ cartQuantity === 1 ? 'item' : 'items' }} in cart</div>
+              </div>
+            </div>
+          </div>
+          
           <!-- Additional Product Details -->
           <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-6">
             <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Product Details</h2>
@@ -204,35 +221,13 @@ const cartStore = useCartStore()
   
 const product = ref<Product | null>(null)
 const currentImageIndex = ref(0)
-const quantity = ref(1)
-  
-const currentPage = ref(1)
-const reviewsPerPage = 10 // You can adjust this number as needed
 
-const paginatedReviews = computed(() => {
-  if (!product.value) return []
-  const start = (currentPage.value - 1) * reviewsPerPage
-  const end = start + reviewsPerPage
-  return product.value.reviews.slice(start, end)
-})
-
-const totalPages = computed(() => {
+const cartQuantity = computed(() => {
   if (!product.value) return 0
-  return Math.ceil(product.value.reviews.length / reviewsPerPage)
+  const cartItem = cartStore.getCartItem(product.value.id)
+  return cartItem ? cartItem.quantity : 0
 })
 
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++
-  }
-}
-
-const prevPage = () => {
-  if (currentPage.value > 1) {
-    currentPage.value--
-  }
-}
-  
 onMounted(async () => {
 const productId = Number(route.params.id)
 await productStore.fetchProducts()
@@ -267,26 +262,48 @@ const setCurrentImage = (index: number) => {
   currentImageIndex.value = index
 }
   
-const incrementQuantity = () => {
-  if (product.value && quantity.value < product.value.stock) {
-    quantity.value++
-  }
-}
-  
-const decrementQuantity = () => {
-  if (quantity.value > 1) {
-    quantity.value--
-  }
-}
-  
 const addToCart = () => {
-if (product.value) {
-  cartStore.addToCart({
-    ...product.value,
-    quantity: quantity.value
-  } as Product & { quantity: number })
-  // Show a success message or update UI as needed
+  if (product.value && product.value.stock > 0) {
+    cartStore.addToCart(product.value, 1)
+  }
 }
+  
+const updateCartQuantity = (change: number) => {
+  if (product.value) {
+    const newQuantity = cartQuantity.value + change
+    if (newQuantity > 0 && newQuantity <= product.value.stock) {
+      cartStore.updateQuantity(product.value.id, newQuantity)
+    } else if (newQuantity === 0) {
+      cartStore.removeFromCart(product.value.id)
+    }
+  }
+}
+  
+const currentPage = ref(1)
+const reviewsPerPage = 10 // You can adjust this number as needed
+
+const paginatedReviews = computed(() => {
+  if (!product.value) return []
+  const start = (currentPage.value - 1) * reviewsPerPage
+  const end = start + reviewsPerPage
+  return product.value.reviews.slice(start, end)
+})
+
+const totalPages = computed(() => {
+  if (!product.value) return 0
+  return Math.ceil(product.value.reviews.length / reviewsPerPage)
+})
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+  }
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+  }
 }
   
 const formatDate = (dateString: string) => {

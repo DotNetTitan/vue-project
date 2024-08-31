@@ -3,27 +3,26 @@ import { ref, computed } from 'vue'
 import type { Product } from '@/types/product'
 
 export const useCartStore = defineStore('cart', () => {
-  const items = ref<(Product & { quantity: number })[]>([])
+  const cartItems = ref<(Product & { quantity: number })[]>([])
 
-  const addToCart = (product: Product) => {
-    const existingItem = items.value.find(item => item.id === product.id)
+  const addToCart = (product: Product, quantity: number = 1) => {
+    const existingItem = cartItems.value.find(item => item.id === product.id)
     if (existingItem) {
-      existingItem.quantity++
+      existingItem.quantity += quantity
     } else {
-      items.value.push({ ...product, quantity: 1 })
+      cartItems.value.push({ ...product, quantity })
     }
   }
 
   const removeFromCart = (productId: number) => {
-    const index = items.value.findIndex(item => item.id === productId)
+    const index = cartItems.value.findIndex(item => item.id === productId)
     if (index !== -1) {
-      items.value.splice(index, 1)
+      cartItems.value.splice(index, 1)
     }
   }
 
-  // Add this new method
   const removeOneFromCart = (productId: number) => {
-    const existingItem = items.value.find(item => item.id === productId)
+    const existingItem = cartItems.value.find(item => item.id === productId)
     if (existingItem) {
       existingItem.quantity--
       if (existingItem.quantity === 0) {
@@ -33,35 +32,40 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   const updateQuantity = (productId: number, quantity: number) => {
-    const item = items.value.find(item => item.id === productId)
+    const item = cartItems.value.find(item => item.id === productId)
     if (item) {
       item.quantity = quantity
+      if (item.quantity <= 0) {
+        removeFromCart(productId)
+      }
     }
   }
 
   const getItemQuantity = (productId: number) => {
-    const item = items.value.find(item => item.id === productId)
+    const item = cartItems.value.find(item => item.id === productId)
     return item ? item.quantity : 0
   }
 
-  const cartItems = computed(() => items.value)
+  const getCartItem = (productId: number) => {
+    return cartItems.value.find(item => item.id === productId)
+  }
 
   const total = computed(() => {
-    return items.value.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+    return cartItems.value.reduce((sum, item) => sum + (item.price * item.quantity), 0)
   })
 
   const itemCount = computed(() => {
-    return items.value.reduce((sum, item) => sum + item.quantity, 0)
+    return cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
   })
 
   return { 
-    items, 
+    cartItems, 
     addToCart, 
     removeFromCart, 
-    removeOneFromCart, // Add this new method to the return object
+    removeOneFromCart,
     updateQuantity, 
-    getItemQuantity, 
-    cartItems, 
+    getItemQuantity,
+    getCartItem,
     total, 
     itemCount 
   }
