@@ -5,10 +5,17 @@
       <div v-if="cartStore.cartItems.length > 0">
         <ul class="space-y-4">
           <li v-for="item in cartStore.cartItems" :key="item.id" class="flex flex-col sm:flex-row items-center bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md">
-            <img :src="item.image" :alt="item.title" class="w-20 h-20 object-cover rounded-md mb-4 sm:mb-0 sm:mr-6">
+            <img :src="item.thumbnail" :alt="item.title" class="w-20 h-20 object-cover rounded-md mb-4 sm:mb-0 sm:mr-6">
             <div class="flex-grow text-center sm:text-left mb-4 sm:mb-0">
               <h3 class="text-lg font-semibold text-gray-800 dark:text-white">{{ item.title }}</h3>
-              <p class="text-gray-600 dark:text-gray-400">${{ item.price.toFixed(2) }}</p>
+              <p class="text-gray-600 dark:text-gray-400">
+                <span class="line-through">${{ item.price.toFixed(2) }}</span>
+                <span class="ml-2 text-green-600">${{ item.discountedPrice.toFixed(2) }}</span>
+              </p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                Savings: ${{ (item.price - item.discountedPrice).toFixed(2) }} 
+                ({{ item.discountPercentage.toFixed(0) }}% off)
+              </p>
             </div>
             <div class="flex items-center space-x-2">
               <button @click="decreaseQuantity(item.id)" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 w-8 h-8 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded">-</button>
@@ -23,9 +30,17 @@
           </li>
         </ul>
         <div class="mt-8 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-          <div class="flex justify-between items-center mb-4">
+          <div class="flex justify-between items-center mb-2">
             <span class="text-lg text-gray-700 dark:text-gray-300">Subtotal</span>
-            <span class="text-lg font-semibold text-gray-900 dark:text-white">${{ cartStore.total.toFixed(2) }}</span>
+            <span class="text-lg font-semibold text-gray-900 dark:text-white">${{ cartStore.subtotal.toFixed(2) }}</span>
+          </div>
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-lg text-gray-700 dark:text-gray-300">Discounted Subtotal</span>
+            <span class="text-lg font-semibold text-green-600">${{ cartStore.discountedSubtotal.toFixed(2) }}</span>
+          </div>
+          <div class="flex justify-between items-center mb-4 text-green-600 font-semibold">
+            <span>Total Savings</span>
+            <span>${{ cartStore.totalSavings.toFixed(2) }}</span>
           </div>
           <button class="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 transition duration-300 flex items-center justify-center">
             <span>Proceed to Checkout</span>

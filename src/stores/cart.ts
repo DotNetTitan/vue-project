@@ -58,20 +58,24 @@ export const useCartStore = defineStore('cart', () => {
     return cartItems.value.find(item => item.id === productId)
   }
 
-  const total = computed(() => {
+  const subtotal = computed(() => {
     return cartItems.value.reduce((sum, item) => sum + (item.price * item.quantity), 0)
   })
 
-  const discountedTotal = computed(() => {
+  const discountedSubtotal = computed(() => {
     return cartItems.value.reduce((sum, item) => sum + (item.discountedPrice * item.quantity), 0)
   })
+
+  const total = computed(() => subtotal.value)
+
+  const discountedTotal = computed(() => discountedSubtotal.value)
 
   const itemCount = computed(() => {
     return cartItems.value.reduce((sum, item) => sum + item.quantity, 0)
   })
 
   const totalSavings = computed(() => {
-    return total.value - discountedTotal.value
+    return subtotal.value - discountedSubtotal.value
   })
 
   return { 
@@ -85,6 +89,8 @@ export const useCartStore = defineStore('cart', () => {
     total, 
     discountedTotal,
     totalSavings,
-    itemCount 
+    itemCount,
+    subtotal,
+    discountedSubtotal
   }
 })
