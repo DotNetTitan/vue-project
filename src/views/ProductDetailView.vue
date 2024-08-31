@@ -1,6 +1,11 @@
 <template>
-  <div v-if="product" class="product-detail min-h-screen p-4 sm:p-8 bg-gray-100 dark:bg-gray-900">
-    <div class="max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+  <div class="product-detail min-h-screen p-4 sm:p-8 bg-gray-100 dark:bg-gray-900">
+    <div v-if="isLoading" class="w-full max-w-6xl mx-auto text-center">
+      <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-indigo-500 mx-auto"></div>
+      <p class="mt-4 text-gray-600 dark:text-gray-400">Loading product details...</p>
+    </div>
+
+    <div v-else-if="product" class="max-w-6xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden animate-fade-in-down">
       <div class="flex flex-col md:flex-row">
         <!-- Product Images -->
         <div class="md:w-1/2 p-4 md:pl-8">
@@ -240,6 +245,7 @@ const cartStore = useCartStore()
   
 const product = ref<Product | null>(null)
 const currentImageIndex = ref(0)
+const isLoading = ref(true)
 
 const cartQuantity = computed(() => {
   if (!product.value) return 0
@@ -248,10 +254,14 @@ const cartQuantity = computed(() => {
 })
 
 onMounted(async () => {
-const productId = Number(route.params.id)
-await productStore.fetchProducts()
-const fetchedProduct = productStore.getProductById(productId)
-product.value = fetchedProduct || null
+  const productId = Number(route.params.id)
+  await productStore.fetchProducts()
+  const fetchedProduct = productStore.getProductById(productId)
+  product.value = fetchedProduct || null
+  isLoading.value = false
+  
+  // Add this line to scroll to the top when the component is mounted
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 })
   
 const discountedPrice = computed(() => {
@@ -350,3 +360,20 @@ const addReview = (review: { rating: number; comment: string }) => {
   }
 }
 </script>
+
+<style scoped>
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 1s ease-out;
+}
+</style>
