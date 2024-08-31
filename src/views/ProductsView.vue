@@ -253,121 +253,110 @@
     </svg>
   </button>
 
-  <!-- Product Details Modal -->
-  <div v-if="selectedProduct" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 md:p-8 max-w-4xl w-full mx-auto relative overflow-y-auto max-h-[90vh] product-details-modal">
-      <button @click="closeProductDetails" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-      <div class="flex flex-col md:flex-row">
-        <div class="md:w-1/2 mb-4 md:mb-0 md:mr-6 relative">
-          <div class="relative overflow-hidden rounded-lg shadow-md" style="padding-top: 100%;">
-            <img 
-              :src="selectedProduct.images[currentImageIndex]" 
-              :alt="selectedProduct.title" 
-              class="absolute top-0 left-0 w-full h-full object-contain rounded-lg border border-gray-200 dark:border-gray-700"
-            >
-          </div>
-          <!-- Left arrow -->
-          <button @click="prevImage" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <!-- Right arrow -->
-          <button @click="nextImage" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-          <div class="flex space-x-2 overflow-x-auto mt-4 pb-2" ref="thumbnailContainer">
-  <button 
-    v-for="(image, index) in selectedProduct.images" 
-    :key="index" 
-    @click="setCurrentImage(index)" 
-    class="flex-shrink-0 w-20 h-20 rounded-md overflow-hidden focus:outline-none border-2 transition-colors duration-200"
-    :class="currentImageIndex === index ? 'border-indigo-500' : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300'"
-    :ref="el => { if (el) thumbnailRefs[index] = el as HTMLElement }"
-  >
-    <img :src="image" :alt="`${selectedProduct.title} - Image ${index + 1}`" class="w-full h-full object-cover">
-  </button>
-</div>
+ <!-- Product Details Modal -->
+<div v-if="selectedProduct" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+  <div class="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 md:p-8 max-w-4xl w-full mx-auto relative overflow-y-auto max-h-[90vh] product-details-modal">
+    <button @click="closeProductDetails" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <div class="flex flex-col md:flex-row">
+      <div class="md:w-1/2 mb-4 md:mb-0 md:mr-6 relative">
+        <div class="relative overflow-hidden rounded-lg shadow-md" style="padding-top: 100%;">
+          <img 
+            :src="selectedProduct.images[currentImageIndex]" 
+            :alt="selectedProduct.title" 
+            class="absolute top-0 left-0 w-full h-full object-contain rounded-lg border border-gray-200 dark:border-gray-700"
+          >
         </div>
-        <div class="flex-1 flex flex-col h-full">
-          <div class="flex-grow">
-            <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-4">{{ selectedProduct.title }}</h2>
-            <p class="text-gray-600 dark:text-gray-400 mb-6 flex-grow overflow-y-auto max-h-48">{{ selectedProduct.description }}</p>
-            <div class="flex items-center mb-6">
-              <span class="text-yellow-400 mr-1">★</span>
-              <span class="text-gray-600 dark:text-gray-400">{{ selectedProduct.rating.toFixed(1) }} ({{ selectedProduct.reviews.length }} reviews)</span>
+        <!-- Left arrow -->
+        <button @click="prevImage" class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <!-- Right arrow -->
+        <button @click="nextImage" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white dark:bg-gray-800 rounded-full p-2 shadow-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+        <div class="flex space-x-2 overflow-x-auto mt-4 pb-2" ref="thumbnailContainer">
+          <button 
+            v-for="(image, index) in selectedProduct.images" 
+            :key="index" 
+            @click="setCurrentImage(index)" 
+            class="flex-shrink-0 w-20 h-20 rounded-md overflow-hidden focus:outline-none border-2 transition-colors duration-200"
+            :class="currentImageIndex === index ? 'border-indigo-500' : 'border-gray-200 dark:border-gray-700 hover:border-indigo-300'"
+            :ref="el => { if (el) thumbnailRefs[index] = el as HTMLElement }"
+          >
+            <img :src="image" :alt="`${selectedProduct.title} - Image ${index + 1}`" class="w-full h-full object-cover">
+          </button>
+        </div>
+      </div>
+      <div class="flex-1 flex flex-col h-full">
+        <div class="flex-grow">
+          <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-4">{{ selectedProduct.title }}</h2>
+          <p class="text-gray-600 dark:text-gray-400 mb-6 flex-grow overflow-y-auto max-h-48">{{ selectedProduct.description }}</p>
+          <div class="flex items-center mb-4">
+            <span class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">${{ discountedPrice.toFixed(2) }}</span>
+            <span class="ml-2 text-lg text-gray-500 line-through">${{ selectedProduct.price.toFixed(2) }}</span>
+            <span class="ml-2 text-lg text-green-500">{{ selectedProduct.discountPercentage.toFixed(0) }}% off</span>
+          </div>
+          <p class="text-gray-600 dark:text-gray-400 mb-6">
+            Stock: {{ selectedProduct.stock }} available
+          </p>
+        </div>
+        
+        <div class="mt-auto">
+          <div class="flex items-center mb-4">
+            <div v-if="currentCartQuantity > 0" class="flex items-center border border-gray-300 dark:border-gray-600 rounded-md">
+              <button 
+                @click="decrementQuantity(selectedProduct)" 
+                class="px-3 py-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >-</button>
+              <span class="px-3 py-1 text-gray-800 dark:text-gray-200">{{ currentCartQuantity }}</span>
+              <button 
+                @click="incrementQuantity(selectedProduct)" 
+                class="px-3 py-1 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                :disabled="currentCartQuantity >= selectedProduct.stock"
+              >+</button>
             </div>
-            <p class="text-2xl font-bold text-indigo-600 dark:text-indigo-400 mb-6">${{ selectedProduct.price.toFixed(2) }}</p>
+            <button 
+              v-if="currentCartQuantity > 0"
+              @click="removeFromCart(selectedProduct)" 
+              class="ml-2 px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-300"
+            >
+              Remove
+            </button>
+            <button 
+              v-else
+              @click="addToCartFromDetails(selectedProduct)" 
+              class="flex-grow bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              :disabled="selectedProduct.stock === 0"
+            >
+              {{ selectedProduct.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
+            </button>
           </div>
           
-          <div class="mt-auto">
-            <div class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-inner mb-6">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-lg font-semibold text-gray-700 dark:text-gray-300">Subtotal:</span>
-                <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
-                  ${{ (selectedProduct.price * currentCartQuantity).toFixed(2) }}
-                </span>
-              </div>
-              <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
-                <span>${{ selectedProduct.price.toFixed(2) }} each</span>
-                <span>{{ currentCartQuantity }} item{{ currentCartQuantity !== 1 ? 's' : '' }} in cart</span>
-              </div>
+          <div v-if="currentCartQuantity > 0" class="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-lg font-semibold text-gray-700 dark:text-gray-300">Subtotal:</span>
+              <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                ${{ (discountedPrice * currentCartQuantity).toFixed(2) }}
+              </span>
             </div>
-            
-            <!-- Cart interaction buttons -->
-            <div class="flex items-center justify-between mb-4" v-if="currentCartQuantity > 0">
-              <div class="flex items-center">
-                <button 
-                  @click="decrementQuantity(selectedProduct)" 
-                  class="px-3 py-1 text-gray-300 bg-gray-700 hover:bg-gray-600 transition duration-200 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:z-10"
-                >
-                  -
-                </button>
-                <span class="px-3 py-1 text-gray-300 bg-gray-800">
-                  {{ currentCartQuantity }}
-                </span>
-                <button 
-                  @click="incrementQuantity(selectedProduct)" 
-                  class="px-3 py-1 text-gray-300 bg-gray-700 hover:bg-gray-600 transition duration-200 rounded-r-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 focus:z-10"
-                >
-                  +
-                </button>
-              </div>
-              <button 
-                @click="removeFromCart(selectedProduct)" 
-                class="text-red-500 hover:text-red-600 transition duration-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 rounded-md"
-              >
-                Remove
-              </button>
-            </div>
-            
-            <!-- Add to Cart button (only shown when item is not in cart) -->
-            <div class="mt-6 flex justify-between items-center">
-              <button 
-                v-if="currentCartQuantity === 0"
-                @click="addToCartFromDetails(selectedProduct)" 
-                class="flex-grow bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 text-lg font-semibold mr-2"
-              >
-                Add to Cart
-              </button>
-              <router-link 
-                :to="{ name: 'ProductDetail', params: { id: selectedProduct.id } }"
-                class="flex-grow bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-center text-lg font-semibold"
-              >
-                View Full Details
-              </router-link>
+            <div class="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
+              <span>${{ discountedPrice.toFixed(2) }} each</span>
+              <span>{{ currentCartQuantity }} item{{ currentCartQuantity !== 1 ? 's' : '' }} in cart</span>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
   <!-- Add this at the end of your template -->
   <ToastNotification 
@@ -570,19 +559,21 @@ const addToCart = (product: Product) => {
   }, 3000)
 }
 
-const addToCartFromDetails = (product: Product) => {
-  const initialQuantity = cartStore.getItemQuantity(product.id)
-  cartStore.addToCart(product)
-  
-  // Show toast only if this is the first time the item is added
-  if (initialQuantity === 0) {
-    recentlyAddedProduct.value = product
-    showToast.value = true
-    setTimeout(() => {
-      recentlyAddedProduct.value = null
-      showToast.value = false
-    }, 3000)
+const discountedPrice = computed(() => {
+  if (selectedProduct.value) {
+    return selectedProduct.value.price * (1 - selectedProduct.value.discountPercentage / 100)
   }
+  return 0
+})
+
+const addToCartFromDetails = (product: Product) => {
+  cartStore.addToCart(product)
+  recentlyAddedProduct.value = product
+  showToast.value = true
+  setTimeout(() => {
+    recentlyAddedProduct.value = null
+    showToast.value = false
+  }, 3000)
 }
 
 const closeToast = () => {
