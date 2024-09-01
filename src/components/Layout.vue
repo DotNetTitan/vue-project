@@ -2,13 +2,16 @@
   <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700">
     <nav class="bg-white dark:bg-gray-800 shadow">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
+        <div class="flex items-center justify-between h-16">
           <div class="flex items-center">
             <RouterLink to="/" class="flex-shrink-0 flex items-center text-xl font-bold text-indigo-600 dark:text-indigo-400">
               E-Commerce
             </RouterLink>
           </div>
-          <div class="hidden sm:flex items-center space-x-4">
+          <div class="flex-1 max-w-2xl mx-8"> <!-- Increased max-width and margin -->
+            <GlobalSearch />
+          </div>
+          <div class="flex items-center space-x-4">
             <RouterLink to="/login" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out">
               Sign in
             </RouterLink>
@@ -20,36 +23,15 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
               </svg>
             </button>
-            <RouterLink to="/cart" class="relative p-2 text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition duration-150 ease-in-out">
+            <RouterLink to="/cart" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 relative">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
-              <span class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+              <span v-if="cartStore.itemCount > 0" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
                 {{ cartStore.itemCount }}
               </span>
             </RouterLink>
           </div>
-          <div class="sm:hidden flex items-center">
-            <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path v-if="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div v-if="mobileMenuOpen" class="sm:hidden">
-        <div class="px-2 pt-2 pb-3 space-y-1">
-          <RouterLink to="/login" class="block text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-base font-medium transition duration-150 ease-in-out">
-            Sign in
-          </RouterLink>
-          <RouterLink to="/cart" class="block text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-base font-medium transition duration-150 ease-in-out">
-            Cart ({{ cartStore.itemCount }})
-          </RouterLink>
-          <button @click="themeStore.toggleDarkMode" class="w-full text-left text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-base font-medium transition duration-150 ease-in-out">
-            Toggle Dark Mode
-          </button>
         </div>
       </div>
     </nav>
@@ -66,6 +48,7 @@ import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useThemeStore } from '@/stores/theme'
 import { useCartStore } from '@/stores/cart'
+import GlobalSearch from '@/components/GlobalSearch.vue'
 
 const themeStore = useThemeStore()
 const cartStore = useCartStore()

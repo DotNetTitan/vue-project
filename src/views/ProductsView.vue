@@ -17,14 +17,6 @@
         />
 
         <div class="md:w-3/4">
-          <!-- Search Bar -->
-          <SearchBar
-            :searchQuery="searchQuery"
-            :suggestions="suggestions"
-            @update:searchQuery="searchQuery = $event"
-            @apply-filters="applyFilters"
-          />
-          
           <!-- Product Grid -->
           <ProductGrid
             :products="paginatedProducts"
@@ -72,20 +64,21 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watchEffect, onUnmounted, watch, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
 import { useProductStore } from '@/stores/products'
 import { useCartStore } from '@/stores/cart'
 import type { Product } from '@/types/product'
 import ToastNotification from '@/components/ToastNotification.vue'
 import ProductDetailModal from '@/components/ProductDetailModal.vue'
 import FilterSection from '@/components/FilterSection.vue'
-import SearchBar from '@/components/SearchBar.vue'
 import ProductGrid from '@/components/ProductGrid.vue'
 import ShoppingCartPreview from '@/components/ShoppingCartPreview.vue'
 
+const route = useRoute()
 const productStore = useProductStore()
 const cartStore = useCartStore()
 
-const searchQuery = ref('')
+const searchQuery = computed(() => route.query.search as string || '')
 const selectedCategories = ref<string[]>([])
 const minPrice = ref(0)
 const maxPrice = ref(1000)
@@ -112,15 +105,6 @@ onMounted(async () => {
 
 const categories = computed(() => {
   return [...new Set(productStore.products.map(product => product.category))]
-})
-
-const suggestions = computed(() => {
-  if (!searchQuery.value) return []
-  const query = searchQuery.value.toLowerCase()
-  return productStore.products
-    .filter(product => product.title.toLowerCase().includes(query))
-    .map(product => product.title)
-    .slice(0, 5)
 })
 
 const filteredProducts = computed(() => {
@@ -202,7 +186,6 @@ const applyFilters = () => {
 const resetFilters = () => {
   currentPage.value = 1
   scrollToTop()
-  searchQuery.value = ''
   selectedCategories.value = []
   minPrice.value = 0
   maxPrice.value = maxProductPrice.value
@@ -231,10 +214,6 @@ const addToCartFromDetails = (product: Product) => {
 
 const closeToast = () => {
   showToast.value = false
-}
-
-const toggleCart = () => {
-  isCartOpen.value = !isCartOpen.value
 }
 
 const scrollToTop = () => {
