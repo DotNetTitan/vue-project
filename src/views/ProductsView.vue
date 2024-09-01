@@ -41,9 +41,6 @@
           <!-- No Products Found Message -->
           <div v-if="sortedAndFilteredProducts.length === 0" class="text-center py-16">
             <p class="text-2xl text-gray-600 dark:text-gray-400 mb-4">No products found matching your criteria.</p>
-            <button @click="resetFilters" class="bg-indigo-500 text-white px-6 py-2 rounded-md hover:bg-indigo-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-              Reset Filters
-            </button>
           </div>
         </div>
       </div>
