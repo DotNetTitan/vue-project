@@ -540,11 +540,6 @@ const toggleCategory = (category: string) => {
   }
 }
 
-const setCurrentImage = (index: number) => {
-  currentImageIndex.value = index
-  scrollToThumbnail(index)
-}
-
 const scrollToThumbnail = (index: number) => {
   if (thumbnailRefs.value[index] && thumbnailContainer.value) {
     const thumbnail = thumbnailRefs.value[index]
