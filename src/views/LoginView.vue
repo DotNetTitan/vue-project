@@ -1,6 +1,14 @@
 <template>
-  <div class="login min-h-screen flex items-center justify-center p-4">
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700">
     <div class="max-w-md w-full space-y-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-6 sm:p-10 rounded-3xl shadow-2xl transform transition-all hover:scale-102 hover:shadow-3xl">
+      <div class="absolute top-4 left-4">
+        <RouterLink to="/" class="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+          Home
+        </RouterLink>
+      </div>
       <div class="text-center">
         <h2 class="mt-6 text-4xl font-extrabold text-gray-900 dark:text-white">Welcome Back</h2>
         <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">Sign in to your account</p>
@@ -41,8 +49,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useUserStore } from '@/stores/user'
 import { RouterLink } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const email = ref('')
 const password = ref('')

@@ -18,17 +18,20 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: LoginView
+      component: LoginView,
+      meta: { withoutLayout: true }
     },
     {
       path: '/register',
       name: 'register',
-      component: RegisterView
+      component: RegisterView,
+      meta: { withoutLayout: true }
     },
     {
       path: '/forgot-password',
       name: 'forgot-password',
-      component: ForgotPasswordView
+      component: ForgotPasswordView,
+      meta: { withoutLayout: true }
     },
     {
       path: '/products',
