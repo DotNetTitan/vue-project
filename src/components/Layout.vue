@@ -8,7 +8,7 @@
               E-Commerce
             </RouterLink>
           </div>
-          <div class="flex-1 max-w-2xl mx-8"> <!-- Increased max-width and margin -->
+          <div class="flex-1 max-w-xl mx-4">
             <GlobalSearch />
           </div>
           <div class="flex items-center space-x-4">
