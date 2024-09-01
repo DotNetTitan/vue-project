@@ -3,7 +3,7 @@
     <div class="max-w-7xl mx-auto">
       <div class="flex flex-col md:flex-row gap-8">
       
-        <!-- Filters -->
+        <!-- Filter Section -->
         <FilterSection
           :categories="categories"
           :maxProductPrice="maxProductPrice"
@@ -16,8 +16,8 @@
           @reset-filters="resetFilters"
         />
 
-        <!-- Product Grid and Search -->
         <div class="md:w-3/4">
+          <!-- Search Bar -->
           <SearchBar
             :searchQuery="searchQuery"
             :suggestions="suggestions"
@@ -25,6 +25,7 @@
             @apply-filters="applyFilters"
           />
           
+          <!-- Product Grid -->
           <ProductGrid
             :products="paginatedProducts"
             :currentPage="currentPage"
@@ -49,10 +50,11 @@
 
   <!-- Shopping Cart Preview -->
   <ShoppingCartPreview
-  v-model:isCartOpen="isCartOpen"
-  :lastAddedProductId="lastAddedProductId"
-/>
+    v-model:isCartOpen="isCartOpen"
+    :lastAddedProductId="lastAddedProductId"
+  />
 
+  <!-- Product Detail Modal -->
   <ProductDetailModal 
     v-if="selectedProduct"
     :product="selectedProduct"
@@ -60,6 +62,7 @@
     @add-to-cart="addToCartFromDetails"
   />
 
+  <!-- Toast Notification -->
   <ToastNotification 
     :show="showToast" 
     :product-name="recentlyAddedProduct?.title || ''" 
