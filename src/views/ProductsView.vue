@@ -151,35 +151,39 @@
               Reset Filters
             </button>
           </div>
+          
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <div v-for="product in paginatedProducts" :key="product.id" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:scale-105 flex flex-col group">
-              <div class="relative">
-                <img :src="product.thumbnail" :alt="product.title" class="w-full h-64 object-cover">
-                <div class="absolute top-0 left-0 bg-green-500 text-white px-3 py-1 m-2 rounded-full text-sm font-semibold">
-                  {{ product.discountPercentage.toFixed(0) }}% off
-                </div>
-                <div class="absolute top-0 right-0 bg-indigo-500 text-white px-3 py-1 m-2 rounded-full text-sm font-semibold">
-                  ${{ product.price.toFixed(2) }}
-                </div>
-                <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <button @click="openProductDetails(product)" class="bg-white text-gray-800 px-4 py-2 rounded-md hover:bg-gray-100 transition duration-300">
-                    View Details
-                  </button>
-                </div>
-              </div>
-              <div class="p-6 flex flex-col flex-grow">
-                <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">{{ product.title }}</h2>
-                <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2 flex-grow">{{ product.description }}</p>
-                <div class="flex items-center mb-4">
-                  <span class="text-yellow-400 mr-1">★</span>
-                  <span class="text-gray-600 dark:text-gray-400">{{ product.rating.toFixed(1) }} ({{ product.reviews.length }})</span>
-                </div>
-                <button @click="addToCart(product)" class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-pink-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transform hover:scale-105">
-                  Add to Cart
-                </button>
-              </div>
-            </div>
-          </div>
+  <div v-for="product in paginatedProducts" :key="product.id" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:scale-105 flex flex-col group">
+    <div class="relative">
+      <img :src="product.thumbnail" :alt="product.title" class="w-full h-64 object-cover">
+      <div class="absolute top-0 left-0 bg-green-500 text-white px-3 py-1 m-2 rounded-full text-sm font-semibold">
+        {{ product.discountPercentage.toFixed(0) }}% off
+      </div>
+      <div class="absolute top-0 right-0 bg-indigo-500 text-white px-3 py-1 m-2 rounded-full text-sm font-semibold">
+        ${{ product.price.toFixed(2) }}
+      </div>
+      <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <button @click="openProductDetails(product)" class="bg-white text-gray-800 px-4 py-2 rounded-md hover:bg-gray-100 transition duration-300">
+          View Details
+        </button>
+      </div>
+    </div>
+    <div class="p-6 flex flex-col flex-grow">
+      <h2 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">{{ product.title }}</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2 flex-grow">{{ product.description }}</p>
+      <div class="flex items-center mb-4">
+        <span class="text-yellow-400 mr-1">★</span>
+        <span class="text-gray-600 dark:text-gray-400">{{ product.rating.toFixed(1) }} ({{ product.reviews.length }})</span>
+      </div>
+      <button @click="addToCart(product)" 
+              class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 font-semibold"
+              :disabled="product.stock === 0">
+        {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
+      </button>
+    </div>
+  </div>
+</div>
+
 
           <!-- Pagination Controls -->
           <div v-if="filteredProducts.length > 0" class="mt-8 flex justify-center items-center space-x-2">
