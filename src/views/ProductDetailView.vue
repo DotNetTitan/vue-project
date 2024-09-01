@@ -210,14 +210,6 @@
             Next
           </button>
         </div>
-        
-        <!-- Button to open Review Modal -->
-        <button 
-          @click="isReviewModalOpen = true"
-          class="mt-4 inline-block bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        >
-          Write a Review
-        </button>
       </div>
     </div>
   </div>

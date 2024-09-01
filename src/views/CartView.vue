@@ -4,18 +4,26 @@
       <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-6 sm:mb-8">Your Cart</h1>
       <div v-if="cartStore.cartItems.length > 0">
         <ul class="space-y-4">
-          <li v-for="item in cartStore.cartItems" :key="item.id" class="flex flex-col sm:flex-row items-center bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow-md">
-            <img :src="item.thumbnail" :alt="item.title" class="w-20 h-20 object-cover rounded-md mb-4 sm:mb-0 sm:mr-6">
+          <li v-for="item in cartStore.cartItems" :key="item.id" class="flex flex-col sm:flex-row items-center bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-lg shadow-md">
+            <img :src="item.thumbnail" :alt="item.title" class="w-24 h-24 object-cover rounded-md mb-4 sm:mb-0 sm:mr-6">
             <div class="flex-grow text-center sm:text-left mb-4 sm:mb-0">
               <h3 class="text-lg font-semibold text-gray-800 dark:text-white">{{ item.title }}</h3>
               <p class="text-gray-600 dark:text-gray-400">
                 <span class="line-through">${{ item.price.toFixed(2) }}</span>
                 <span class="ml-2 text-green-600">${{ item.discountedPrice.toFixed(2) }}</span>
               </p>
-              <p class="text-sm text-gray-500 dark:text-gray-400">
-                Savings: ${{ (item.price - item.discountedPrice).toFixed(2) }} 
-                ({{ item.discountPercentage.toFixed(0) }}% off)
-              </p>
+              <div class="mt-2">
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  <span class="font-semibold">Savings:</span> <span class="text-lg text-white">${{ ((item.price - item.discountedPrice) * item.quantity).toFixed(2) }}</span>
+                  <span class="text-green-600">({{ item.discountPercentage.toFixed(0) }}% off)</span>
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  <span class="font-semibold">Total:</span> <span class="text-lg text-white">${{ (item.price * item.quantity).toFixed(2) }}</span>
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  <span class="font-semibold">Discounted Total:</span> <span class="text-lg text-white">${{ (item.discountedPrice * item.quantity).toFixed(2) }}</span>
+                </p>
+              </div>
             </div>
             <div class="flex items-center space-x-2">
               <button @click="decreaseQuantity(item.id)" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 w-8 h-8 flex items-center justify-center border border-gray-300 dark:border-gray-600 rounded">-</button>
