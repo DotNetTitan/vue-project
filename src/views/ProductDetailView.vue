@@ -69,7 +69,7 @@
           <p class="text-gray-600 dark:text-gray-400 mb-6">{{ product.description }}</p>
           <div class="flex items-center mb-6">
             <p class="text-3xl font-bold text-indigo-600 dark:text-indigo-400">${{ discountedPrice.toFixed(2) }}</p>
-            <p class="ml-2 text-lg text-gray-500 line-through">${{ product.price.toFixed(2) }}</p>
+            <p class="ml-2 text-lg text-gray-500 dark:text-gray-400 line-through">${{ product.price.toFixed(2) }}</p>
             <p class="ml-2 text-lg text-green-500">{{ product.discountPercentage.toFixed(0) }}% off</p>
           </div>
   
@@ -110,15 +110,15 @@
           </div>
 
           <!-- Subtotal -->
-          <div v-if="cartQuantity > 0" class="mb-6 p-4 bg-gray-700 rounded-lg">
+          <div v-if="cartQuantity > 0" class="mb-6 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
             <div class="flex justify-between items-center">
               <div>
-                <span class="text-lg font-semibold text-white">Subtotal:</span>
-                <div class="text-sm text-gray-400">${{ discountedPrice.toFixed(2) }} each</div>
+                <span class="text-lg font-semibold text-gray-900 dark:text-white">Subtotal:</span>
+                <div class="text-sm text-gray-600 dark:text-gray-400">${{ discountedPrice.toFixed(2) }} each</div>
               </div>
               <div class="text-right">
-                <span class="text-xl font-bold text-indigo-400">${{ (discountedPrice * cartQuantity).toFixed(2) }}</span>
-                <div class="text-sm text-gray-400">{{ cartQuantity }} {{ cartQuantity === 1 ? 'item' : 'items' }} in cart</div>
+                <span class="text-xl font-bold text-indigo-600 dark:text-indigo-400">${{ (discountedPrice * cartQuantity).toFixed(2) }}</span>
+                <div class="text-sm text-gray-600 dark:text-gray-400">{{ cartQuantity }} {{ cartQuantity === 1 ? 'item' : 'items' }} in cart</div>
               </div>
             </div>
           </div>
@@ -201,7 +201,7 @@
           >
             Previous
           </button>
-          <span class="px-4 py-2">Page {{ currentPage }} of {{ totalPages }}</span>
+          <span class="px-4 py-2 text-gray-900 dark:text-white">Page {{ currentPage }} of {{ totalPages }}</span>
           <button 
             @click="nextPage" 
             :disabled="currentPage === totalPages"
