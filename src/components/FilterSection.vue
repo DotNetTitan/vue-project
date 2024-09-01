@@ -1,7 +1,9 @@
 <template>
     <div class="md:w-1/4">
       <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl">
-        <h2 class="text-2xl font-bold text-gray-800 dark:text-white mb-6">Filters</h2>
+        <div class="mb-6">
+          <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Filters</h2>
+        </div>
         <div class="space-y-6">
           <!-- Filter toggles -->
           <div class="flex flex-wrap gap-2 mb-4">
@@ -96,11 +98,12 @@
             </div>
           </div>
   
-          <div class="flex space-x-2 mt-4">
-            <button @click="applyFilters" class="flex-1 bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-2 rounded-md hover:from-indigo-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transform hover:scale-105">
-              Apply Filters
-            </button>
-            <button @click="resetFilters" class="flex-1 bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300 px-6 py-2 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+          <!-- Reset Filters button -->
+          <div class="mt-8">
+            <button @click="resetFilters" class="flex items-center bg-indigo-700 text-white px-4 py-2 rounded-md hover:bg-indigo-800 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-sm w-full justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+              </svg>
               Reset Filters
             </button>
           </div>
@@ -125,7 +128,6 @@
     (e: 'update:maxPrice', value: number): void
     (e: 'update:minRating', value: number): void
     (e: 'update:sortBy', value: string): void
-    (e: 'applyFilters'): void
     (e: 'resetFilters'): void
   }>()
   
@@ -179,10 +181,6 @@
   const updateSortBy = (value: string) => {
     sortBy.value = value
     emit('update:sortBy', value)
-  }
-  
-  const applyFilters = () => {
-    emit('applyFilters')
   }
   
   const resetFilters = () => {
