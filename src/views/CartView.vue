@@ -7,32 +7,33 @@
           <li v-for="item in cartStore.cartItems" :key="item.id" class="bg-gray-800 p-6 rounded-lg shadow-md">
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-4">
-                <img :src="item.thumbnail" :alt="item.title" class="w-24 h-24 object-cover rounded-md">
+                <img :src="item.thumbnail" :alt="item.title" class="w-20 h-20 object-cover rounded-md">
                 <div>
                   <h3 class="text-xl font-semibold">{{ item.title }}</h3>
-                  <div class="flex items-center space-x-2 mt-1">
-                    <span class="text-green-400">${{ item.discountedPrice.toFixed(2) }}</span>
-                    <span class="text-gray-400 line-through text-sm">${{ item.price.toFixed(2) }}</span>
-                    <span class="text-green-400 text-sm">
+                  <div class="flex items-baseline space-x-2 mt-1">
+                    <span class="text-lg font-semibold text-green-400">${{ item.discountedPrice.toFixed(2) }}</span>
+                    <span class="text-sm text-gray-500 line-through">${{ item.price.toFixed(2) }}</span>
+                    <span class="text-sm text-green-400">
                       {{ ((item.price - item.discountedPrice) / item.price * 100).toFixed(0) }}% off
                     </span>
                   </div>
                 </div>
               </div>
-              <div class="flex items-center space-x-4">
-                <div class="flex items-center space-x-2">
-                  <button @click="decreaseQuantity(item.id)" class="bg-gray-700 text-white px-3 py-1 rounded-md hover:bg-gray-600 transition duration-300">-</button>
-                  <span class="text-xl font-semibold">{{ item.quantity }}</span>
-                  <button @click="increaseQuantity(item.id)" class="bg-gray-700 text-white px-3 py-1 rounded-md hover:bg-gray-600 transition duration-300">+</button>
-                </div>
-                <button @click="removeItem(item.id)" class="text-red-400 hover:text-red-300 transition duration-300">
+              <div class="flex items-center space-x-2">
+                <button @click="decreaseQuantity(item.id)" class="bg-gray-700 text-white px-3 py-1 rounded-md hover:bg-gray-600 transition duration-300">-</button>
+                <span class="text-xl font-semibold px-2">{{ item.quantity }}</span>
+                <button @click="increaseQuantity(item.id)" class="bg-gray-700 text-white px-3 py-1 rounded-md hover:bg-gray-600 transition duration-300">+</button>
+                <button @click="removeItem(item.id)" class="text-red-400 hover:text-red-300 transition duration-300 ml-4">
                   Remove
                 </button>
               </div>
             </div>
             <div class="mt-4 text-right">
               <p class="text-sm text-gray-400">Total: ${{ (item.price * item.quantity).toFixed(2) }}</p>
-              <p class="text-sm text-green-400">Discounted Total: ${{ (item.discountedPrice * item.quantity).toFixed(2) }}</p>
+              <p class="text-sm text-green-400">
+                Savings: ${{ ((item.price - item.discountedPrice) * item.quantity).toFixed(2) }}
+              </p>
+              <p class="text-sm text-white">Discounted Total: ${{ (item.discountedPrice * item.quantity).toFixed(2) }}</p>
             </div>
           </li>
         </ul>
@@ -43,7 +44,7 @@
           </div>
           <div class="flex justify-between items-center mb-4">
             <span class="text-xl">Discounted Subtotal</span>
-            <span class="text-xl font-semibold text-green-400">${{ cartStore.discountedSubtotal.toFixed(2) }}</span>
+            <span class="text-xl font-semibold text-white">${{ cartStore.discountedSubtotal.toFixed(2) }}</span>
           </div>
           <div class="flex justify-between items-center mb-6 text-green-400 font-semibold">
             <span class="text-xl">Total Savings</span>
@@ -94,3 +95,21 @@ const removeItem = (productId: number) => {
   cartStore.removeFromCart(productId)
 }
 </script>
+
+<style scoped>
+.text-green-400 {
+  color: #4ade80;
+}
+.text-gray-500 {
+  color: #6b7280;
+}
+.bg-gray-700 {
+  background-color: #374151;
+}
+.bg-gray-800 {
+  background-color: #1f2937;
+}
+.bg-gray-900 {
+  background-color: #111827;
+}
+</style>
