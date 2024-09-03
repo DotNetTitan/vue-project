@@ -102,7 +102,7 @@
             <button 
               v-else
               @click="addToCart" 
-              class="flex-grow bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3 px-6 rounded-lg font-bold text-lg hover:from-indigo-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               :disabled="product.stock === 0"
             >
               {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}

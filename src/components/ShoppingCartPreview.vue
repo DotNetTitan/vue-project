@@ -11,7 +11,7 @@
         </div>
         <ul v-if="cartStore.cartItems.length > 0" class="space-y-2 max-h-60 overflow-y-auto">
           <li v-for="item in cartStore.cartItems" :key="item.id" 
-              :class="{'bg-green-100 dark:bg-green-800': item.id === lastAddedProductId}"
+              :class="{'bg-indigo-100 dark:bg-indigo-900': item.id === lastAddedProductId}"
               class="flex justify-between items-center p-2 rounded transition-colors duration-500">
             <span class="text-gray-700 dark:text-gray-300">{{ item.title }} (x{{ item.quantity }})</span>
             <span class="text-gray-600 dark:text-gray-400">${{ (item.price * item.quantity).toFixed(2) }}</span>

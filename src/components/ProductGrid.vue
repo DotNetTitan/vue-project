@@ -9,9 +9,9 @@
       </div>
       
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <div v-for="product in products" :key="product.id" class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl transform hover:scale-105 flex flex-col group">
+        <div v-for="product in products" :key="product.id" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 flex flex-col group">
           <div class="relative">
-            <img :src="product.thumbnail" :alt="product.title" class="w-full h-64 object-cover">
+            <img :src="product.thumbnail" :alt="product.title" class="w-full h-48 object-cover">
             <div class="absolute top-0 left-0 bg-green-500 text-white px-3 py-1 m-2 rounded-full text-sm font-semibold">
               {{ product.discountPercentage.toFixed(0) }}% off
             </div>
@@ -32,7 +32,7 @@
               <span class="text-gray-600 dark:text-gray-400">{{ product.rating.toFixed(1) }} ({{ product.reviews.length }})</span>
             </div>
             <button @click="$emit('add-to-cart', product)" 
-                    class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 font-semibold"
+                    class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-2 px-4 rounded-md hover:from-indigo-600 hover:to-purple-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 font-semibold"
                     :disabled="product.stock === 0">
               {{ product.stock === 0 ? 'Out of Stock' : 'Add to Cart' }}
             </button>

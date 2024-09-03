@@ -1,18 +1,18 @@
 <template>
   <div class="home min-h-screen flex flex-col justify-center items-center p-4 sm:p-8">
     <div class="max-w-6xl mx-auto text-center mb-12">
-      <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 dark:text-white mb-4 sm:mb-8 animate-fade-in-down">
+      <h1 class="text-5xl sm:text-6xl font-extrabold text-white mb-4 sm:mb-8 animate-fade-in-down">
         Welcome to Our E-Commerce Store
       </h1>
-      <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8 sm:mb-12 animate-fade-in-up">
+      <p class="text-xl sm:text-2xl text-gray-200 mb-8 sm:mb-12 animate-fade-in-up">
         Discover amazing products at great prices!
       </p>
 
       <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-        <RouterLink to="/products" class="inline-block px-6 py-3 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+        <RouterLink to="/products" class="inline-block px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-bold rounded-lg hover:from-indigo-600 hover:to-purple-700 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
           Browse All Products
         </RouterLink>
-        <RouterLink to="/register" class="inline-block px-6 py-3 bg-white text-indigo-600 font-bold rounded-lg border-2 border-indigo-600 hover:bg-indigo-50 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+        <RouterLink to="/register" class="inline-block px-6 py-3 bg-white text-indigo-600 font-bold rounded-lg border-2 border-indigo-600 hover:bg-indigo-50 transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
           Sign Up
         </RouterLink>
       </div>
