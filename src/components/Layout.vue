@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-500 dark:from-gray-900 dark:via-gray-800 dark:to-gray-700">
-    <nav class="bg-white dark:bg-gray-800 shadow">
+  <div class="min-h-screen bg-gray-900 text-white">
+    <nav class="bg-gray-800 shadow">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
           <div class="flex items-center">
