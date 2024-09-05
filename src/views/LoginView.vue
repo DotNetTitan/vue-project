@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-900">
+  <div class="min-h-screen flex items-center justify-center p-4 bg-gray-900">
     <div class="max-w-md w-full space-y-8 bg-gray-800 p-6 sm:p-10 rounded-3xl shadow-2xl transform transition-all hover:scale-102 hover:shadow-3xl">
       <div class="absolute top-4 left-4">
         <RouterLink to="/" class="text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium">
