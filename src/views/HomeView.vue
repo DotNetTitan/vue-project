@@ -28,7 +28,7 @@
       <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-6 text-center">Featured Categories</h2>
       <div class="space-y-12">
         <div v-for="(category, index) in featuredCategories" :key="category" 
-             class="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg transform transition-all duration-500 ease-in-out"
+             class="backdrop-filter backdrop-blur-lg bg-white bg-opacity-10 dark:bg-gray-800 dark:bg-opacity-30 rounded-xl p-6 shadow-lg transform transition-all duration-500 ease-in-out"
              :class="{'opacity-0 translate-y-10': !isVisible(index), 'opacity-100 translate-y-0': isVisible(index)}">
           <h3 class="text-2xl font-semibold mb-4 text-gray-900 dark:text-white">
             {{ category }}
@@ -36,7 +36,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div v-for="product in getCategoryProducts(category)" :key="product.id" 
                  @click="navigateToProduct(product.id)"
-                 class="bg-gray-100 dark:bg-gray-700 rounded-lg p-4 text-center transform transition duration-300 hover:scale-105 cursor-pointer">
+                 class="bg-white bg-opacity-20 dark:bg-gray-700 dark:bg-opacity-50 rounded-lg p-4 text-center transform transition duration-300 hover:scale-105 cursor-pointer backdrop-filter backdrop-blur-sm">
               <img :src="product.thumbnail" :alt="product.title" class="w-full h-40 object-cover mb-3 rounded">
               <h4 class="text-lg font-semibold mb-2 text-gray-900 dark:text-white">{{ product.title }}</h4>
               <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">{{ truncateDescription(product.description) }}</p>

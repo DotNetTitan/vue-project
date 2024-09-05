@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-gray-900 text-white">
-    <nav class="bg-gray-800 shadow">
+    <nav class="bg-gray-800 shadow sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16 sm:h-20">
           <div class="flex items-center">
@@ -12,7 +12,10 @@
             <GlobalSearch />
           </div>
           <div class="hidden md:flex items-center space-x-4">
-            <RouterLink to="/login" class="text-gray-300 hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out">
+            <RouterLink to="/login" class="flex items-center text-gray-300 hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition duration-150 ease-in-out">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+              </svg>
               Sign in
             </RouterLink>
             <RouterLink to="/cart" class="text-gray-300 hover:text-indigo-400 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 relative">
