@@ -13,7 +13,7 @@ This is a Vue 3 application built using Vite, TypeScript, and Tailwind CSS, inte
 - **Routing**: Vue Router
 - **Icons**: Heroicons
 - **Utility Library**: Lodash-es
-- **Mock Data**: [DummyJSON API](https://dummyjson.com/)
+- **Mock Data**: [DummyJSON API](https://github.com/Ovi/DummyJSON)
 - **CI/CD**: GitHub Actions
 
 ## Getting Started
