@@ -3,19 +3,6 @@
 
 This is a Vue 3 application built using Vite, TypeScript, and Tailwind CSS, integrating modern web development technologies and best practices.
 
-## Features
-
-- **Vue 3** with Composition API
-- **TypeScript** for type-safe development
-- **Vite** for fast build and dev server
-- **Tailwind CSS** for utility-first CSS styling
-- **Pinia** for centralized state management
-- **Vue Router** for client-side navigation
-- **Heroicons** for SVG icons
-- **Lodash-es** for functional utilities
-- **DummyJSON** for mock data during development
-- **GitHub Actions** for automated builds and deployment
-
 ## Technologies Used
 
 - **Frontend Framework**: Vue 3
@@ -26,7 +13,7 @@ This is a Vue 3 application built using Vite, TypeScript, and Tailwind CSS, inte
 - **Routing**: Vue Router
 - **Icons**: Heroicons
 - **Utility Library**: Lodash-es
-- **Mock Data**: DummyJSON API
+- **Mock Data**: [DummyJSON API](https://dummyjson.com/)
 - **CI/CD**: GitHub Actions
 
 ## Getting Started
