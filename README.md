@@ -1,33 +1,85 @@
-# vue-project
 
-This template should help get you started developing with Vue 3 in Vite.
+# Vue Project
 
-## Recommended IDE Setup
+This is a Vue 3 application built using Vite, TypeScript, and Tailwind CSS, integrating modern web development technologies and best practices.
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Features
 
-## Type Support for `.vue` Imports in TS
+- **Vue 3** with Composition API
+- **TypeScript** for type-safe development
+- **Vite** for fast build and dev server
+- **Tailwind CSS** for utility-first CSS styling
+- **Pinia** for centralized state management
+- **Vue Router** for client-side navigation
+- **Heroicons** for SVG icons
+- **Lodash-es** for functional utilities
+- **DummyJSON** for mock data during development
+- **GitHub Actions** for automated builds and deployment
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+## Technologies Used
 
-## Customize configuration
+- **Frontend Framework**: Vue 3
+- **Language**: TypeScript
+- **Build Tool**: Vite
+- **CSS Framework**: Tailwind CSS
+- **State Management**: Pinia
+- **Routing**: Vue Router
+- **Icons**: Heroicons
+- **Utility Library**: Lodash-es
+- **Mock Data**: DummyJSON API
+- **CI/CD**: GitHub Actions
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+## Getting Started
 
-## Project Setup
+### Prerequisites
 
-```sh
-npm install
-```
+- **Node.js** (version 20 or later)
+- **npm** (included with Node.js installation)
 
-### Compile and Hot-Reload for Development
+### Installation
 
-```sh
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/DotNetTitan/vue-project.git
+   cd vue-project
+   ```
+
+2. Install the dependencies:
+   ```bash
+   npm install
+   ```
+
+### Development
+
+To start the development server:
+```bash
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+This will start the Vite server and hot-reload the project on changes.
 
-```sh
-npm run build
-```
+## IDE Setup
+
+We recommend using **Visual Studio Code** for development, with the following extensions:
+- **Volar** (for Vue 3 support) – disable Vetur if installed.
+- **ESLint** (for consistent code quality)
+
+## TypeScript Support
+
+The project uses `vue-tsc` for static type checking. The Volar extension in VS Code enhances TypeScript support in `.vue` files.
+
+## Customization
+
+You can modify the Vite configuration to suit your needs. Refer to the [Vite Documentation](https://vitejs.dev/config/) for more details.
+
+## Tailwind CSS
+
+Styling is done using **Tailwind CSS**. The configuration file for customizing Tailwind can be found at `tailwind.config.js`.
+
+## Deployment
+
+GitHub Actions is configured for CI/CD. The workflow configuration is located in `.github/workflows`.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
