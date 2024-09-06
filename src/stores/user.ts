@@ -16,6 +16,22 @@ export const useUserStore = defineStore('user', () => {
   const user = ref<User | null>(null)
   const isAuthenticated = ref(false)
 
+  const register = (email: string, password: string) => {
+    // Implement registration logic here
+    console.log('Register:', email, password)
+    // You would typically make an API call to your backend here
+    // For now, we'll just log the attempt
+    // In a real application, you'd want to handle success and error cases
+  }
+
+  const forgotPassword = (email: string) => {
+    // Implement your password reset logic here
+    console.log(`Password reset requested for email: ${email}`)
+    // You would typically make an API call to your backend here
+    // For now, we'll just log the attempt
+    // In a real application, you'd want to handle success and error cases
+  }
+
   const login = async (username: string, password: string) => {
     try {
       const response = await fetch('https://dummyjson.com/auth/login', {
@@ -69,5 +85,13 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  return { user, isAuthenticated, login, logout, checkAuth }
+  return { 
+    user, 
+    isAuthenticated, 
+    login, 
+    logout, 
+    checkAuth,
+    register,  // Add this
+    forgotPassword  // Add this
+  }
 })
