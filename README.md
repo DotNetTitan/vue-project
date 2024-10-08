@@ -1,5 +1,5 @@
 
-#Vue Project
+# Vue Project
 
 This is a Vue 3 application built using Vite, TypeScript, and Tailwind CSS, integrating modern web development technologies and best practices.
 
