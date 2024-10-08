@@ -47,7 +47,7 @@ This will start the Vite server and hot-reload the project on changes.
 
 ## IDE Setup
 
-We recommend using **Visual Studio Code** for development, with the following extensions:
+I recommend using **Visual Studio Code** for development, with the following extensions:
 - **Volar** (for Vue 3 support) – disable Vetur if installed.
 - **ESLint** (for consistent code quality)
 
